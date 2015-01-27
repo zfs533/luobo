@@ -1,0 +1,28 @@
+{
+    "project_type":"javascript",
+    "debugMode":1,
+    "showFPS":true,
+    "frameRate":60,
+    "id":"gameCanvas",
+    "renderMode":2,
+    "engineDir":"frameworks/cocos2d-html5",
+    "modules":[
+        "menus"
+    ],
+    "jsList":[
+        "src/resource.js",
+        "src/app.js",
+        "src/zfs/base/Default.js",
+        "src/zfs/base/GlobalVar.js",
+        "src/zfs/base/BaseButton.js",
+        "src/zfs/base/BaseScene.js",
+        "src/zfs/module/themes/LuoBoThemesScene.js",
+        "src/zfs/module/themes/LuoBoWeaponCreate.js",
+        "src/zfs/module/themes/themes01/LuoboThemesScene01.js",
+        "src/zfs/module/themes/themes01/LuoboLevel01.js",
+        "src/zfs/module/mainscene/LuoBoMainScene.js",
+        "src/zfs/module/mainscene/LuoBoLockLayout.js",
+        "src/zfs/module/help/LuoBoHelpScene.js",
+        "src/zfs/module/setting/LuoBoSettingScene.js"
+    ]
+}
