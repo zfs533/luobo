@@ -18,7 +18,7 @@ LuoBoWeaponCreate.createBottle = function()
 	
 	return bottle;
 };
-
+//the base bottle constructor
 LuoBoWeaponCreate.createBottleFirst = function()
 {
 	var first = {};
@@ -36,9 +36,31 @@ LuoBoWeaponCreate.createBottleFirst = function()
 		var animate = cc.Animate.create(animationn);
 		return animate;
 	}();
-	first.bullet = function()
+	first.circle = null;//fight around circle
+	first.radius = 200;//fight radius;
+	return first;
+};
+// animation for bottle weapon
+function getBottleAnimation()
+{
+	var animation = [];
+	for(var i = 11; i < 14; i++)
 	{
-		var buttle = cc.Sprite.createWithSpriteFrameName("PBottle11.png");
+		var spriteFrame = cc.spriteFrameCache.getSpriteFrame("Bottle"+i+".png");
+		animation.push(spriteFrame);
+	}
+	var animationn = cc.Animation.create(animation, 0.2);
+	var animate = cc.Animate.create(animationn);
+	return animate;
+};
+//the bullet constructor for bottle weapon
+function CreateBottleBullet(p)
+{
+	if( this instanceof CreateBottleBullet)
+	{
+		this.buttle = cc.Sprite.createWithSpriteFrameName("PBottle11.png");
+		this.buttle.setPosition(p.x, p.y);
+		this.buttle.speed = 3;
 		var animation = [];
 		for(var i = 11; i < 14; i++)
 		{
@@ -47,31 +69,13 @@ LuoBoWeaponCreate.createBottleFirst = function()
 		}
 		var animationn = cc.Animation.create(animation, 0.2);
 		var animate = cc.Animate.create(animationn);
-		buttle.runAction(animate.repeatForever());
-		return buttle;
-	}();
-	return first;
+		this.buttle.runAction(animate.repeatForever());
+	}
+	else
+	{
+		return new CreateBottleBullet();
+	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

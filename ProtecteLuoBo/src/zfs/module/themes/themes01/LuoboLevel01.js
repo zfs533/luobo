@@ -15,6 +15,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.moveMonster();
 		this.scheduleUpdate();
 		this.addTouchEventListener(this.touchLayerFunc, this);
+		this.bulletArr = [];
+		this.weaponArr = [];
+		this.handleShooting();//handle shooting
 	},
 	//tmxtiled map
 	handleTMXtileMap:function()
@@ -84,8 +87,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 		var bloodBar = ccui.Slider.create();
 		bloodBar.loadProgressBarTexture("MonsterHP01.png", ccui.Widget.PLIST_TEXTURE);
 		bloodBar.loadBarTexture("MonsterHP02.png", ccui.Widget.PLIST_TEXTURE);
-		bloodBar.setPercent(50);
+		bloodBar.setPercent(100);
 		bloodBar.setPosition(monster.width/2+5, monster.height+10);
+		bloodBar.visible = false;
 		monster.addChild(bloodBar, 10);
 		
 		var monsterOb = {monster:monster, blood:bloodBar};
@@ -122,7 +126,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 			}
 			n++;
 			this.startMove(n,flay);
-		}, this);  
+		}, this);
 		var sequnce = cc.sequence(moveTo, callFunc);
 		flay.runAction(sequnce);
 	},  
@@ -146,7 +150,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.luobo.setPosition(obj1.x+50, obj1.y);
 		spriteLayer.addChild(this.luobo, 0);
 	},
-	/*
+	/**
 	 * set luobo animation
 	 * @param:type:Number animation type
 	 * @param:index:Number
@@ -246,6 +250,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		this.checkCollision();
 		this.refreshPointAnimationPos();
+		this.checkBulletCollision();
 	},
 	//check collision
 	checkCollision:function()
@@ -501,9 +506,12 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.pauseBtn.addTouchEventListener(this.pauseBtnTouchEvent, this);
 		this.addChild(this.pauseBtn, 0);
 		
-		//luobo current state
+		//luobo current state or injured
 		this.luoboState = 10;
-		
+		//weapon/bullet/monster/tool all collision layer
+		this.collisionLayer = cc.Layer.create();
+		this.collisionLayer.setContentSize(Default.windowSize());
+		this.addChild(this.collisionLayer, 30);
 	},
 	//select target play the point animate, show current touch target is selected
 	getPointAnimate:function(point, target)
@@ -618,7 +626,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.weaponLayout = ccui.Layout.create();
 		this.weaponLayout.setSize(cc.size(260, 80));
 		this.weaponLayout.setPosition(point);
-		this.addChild(this.weaponLayout, 21);
+		this.addChild(this.weaponLayout, 40);
 
 		this.bottle = LuoBoWeaponCreate.createBottle();
 		this.bottle.disabled.setPosition(this.bottle.disabled.width/2, this.bottle.disabled.height/2);
@@ -675,25 +683,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 		if(state === ccui.Widget.TOUCH_ENDED)
 		{
 			this.getAirAnimateion(this.addRect.getPosition());
+			this.installWeapon(target.name);
 			this.hideWeaponLayout();
 			this.hideAddWeaponAnimate();
-			this.installWeapon(target.name);
-		}
-	},
-	/*
-	 * install weapon with name
-	 * @param:weaponName:string, the weapon name
-	 */
-	installWeapon:function(weaponName)
-	{
-		if(weaponName == "bottle")
-		{
-			var bottleWeapon = LuoBoWeaponCreate.createBottleFirst();
-			bottleWeapon.base.setPosition(300,300);
-			bottleWeapon.firstb.setPosition(300, 300);
-			bottleWeapon.firstb.runAction(bottleWeapon.animationn.repeatForever());
-			this.addChild(bottleWeapon.base, 300);
-			this.addChild(bottleWeapon.firstb, 300);
 		}
 	},
 	//handle weapon point that can show weapon layout all when its stay left/right/top/bottom
@@ -760,6 +752,156 @@ var LuoboLevel01 = ccui.Layout.extend(
 				target.loadTextures("speed21.png","speed22.png","",ccui.Widget.PLIST_TEXTURE);
 			} 
 		}
+	},
+	/**
+	 * install weapon with name
+	 * @param:weaponName:string, the weapon name
+	 */
+	installWeapon:function(weaponName)
+	{
+		if(weaponName == "bottle")
+		{
+			this.handleLuoboWeaponBottle();
+		}
+	},
+	/**
+	 * handle the luobo weapon actions;for example rotate/shoot/sell
+	 * @param;parent:LuoboLevel01 class
+	 */
+	handleLuoboWeaponBottle:function()
+	{
+		var point = this.addRect.getPosition();
+		var bottleWeapon = LuoBoWeaponCreate.createBottleFirst();
+		bottleWeapon.base.setPosition(point);
+		bottleWeapon.base.addTouchEventListener(this.bottleWeaponfunc, this);
+		bottleWeapon.firstb.setPosition(point);
+//		bottleWeapon.firstb.runAction(bottleWeapon.animationn.repeatForever());
+		bottleWeapon.base.runRotation = bottleWeapon.firstb.getRotation();
+		
+		var circle = cc.DrawNode.create();
+		var center = point;
+		var radius = bottleWeapon.radius;
+		var angle = 0;
+		var segments= 300;
+		var drawLineToCenter = false;
+		var lineWidth = 10;
+		var color = cc.color(255, 0, 0, 255);
+		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
+		this.collisionLayer.addChild(circle, 0);
+		bottleWeapon.circle = circle;
+		
+		this.collisionLayer.addChild(bottleWeapon.base, 0);
+		this.collisionLayer.addChild(bottleWeapon.firstb, 0);
+		
+		this.weaponArr.push(bottleWeapon);
+	},
+	bottleWeaponfunc:function(target, state)
+	{
+		if(state === ccui.Widget.TOUCH_ENDED)
+		{
+		}
+	},
+	//check bullet collision
+	checkBulletCollision:function()
+	{
+		if(this.bulletArr)
+		{
+			for(var i = 0;i < this.bulletArr.length; i++)
+			{
+				var angle = this.bulletArr[i].getRotation()/180*Math.PI;
+				var speed= 5;
+				this.bulletArr[i].y+=Math.cos(angle)*speed;
+				this.bulletArr[i].x+=Math.sin(angle)*speed;
+				//remove bullet
+				if( this.bulletArr[i].x < 0 || this.bulletArr[i].y < 0 || this.bulletArr[i].x > Default.windowWidth() || this.bulletArr[i].y > Default.windowHeight() )
+				{
+					this.bulletArr[i].removeFromParent();
+					this.bulletArr.splice(i, 1);
+				}
+				//check collision of both bullet and monster
+				for(var j = 0,len = this.monsterArr.length; j < len; j++)
+				{
+					var rect2 = this.monsterArr[j].monster.getBoundingBox(),
+						pp	  = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
+					if( cc.rectContainsPoint(rect2, pp) )
+					{
+						this.bulletArr[i].removeFromParent();
+						this.bulletArr.splice(i, 1);
+						this.monsterArr[j].blood.visible = true;
+						this.monsterArr[j].blood.setPercent(this.monsterArr[j].blood.getPercent()-15);
+						if( this.monsterArr[j].blood.getPercent() <= 0 )
+						{
+							this.monsterArr[j].monster.removeFromParent();
+							this.monsterArr.splice(j, 1);
+						}
+						break;
+					}
+					else
+					{
+						this.monsterArr[j].blood.visible = false;
+					}
+				}
+			}
+		}
+		//this.isShooting control shooting rate
+		if(this.weaponArr && this.isShooting )
+		{
+			for(var i = 0; i < this.weaponArr.length; i++)
+			{
+				this.startRotateWeapon(this.weaponArr[i]);
+			}
+		}
+	},
+	//start rotate weapon
+	startRotateWeapon:function(weapon)
+	{
+		for(var i = 0; i < this.monsterArr.length; i++)
+		{
+			var P1 = this.monsterArr[i].monster.getPosition();
+			var P2 = weapon.firstb.getPosition();
+			var distance = cc.pDistance(P1,P2);
+			if(distance <= weapon.radius)
+			{
+				// fight the first monster
+				break;
+			}
+		}
+		if(distance <= weapon.radius)
+		{
+			var angle = Math.atan2(P1.x - P2.x, P1.y - P2.y);
+			angle = angle*180/Math.PI;
+			weapon.firstb.stopAllActions();
+			weapon.firstb.runAction(getBottleAnimation().repeatForever());
+			weapon.firstb.setRotation(angle);
+			this.shooting(weapon.firstb, angle);
+		}
+		else
+		{
+			weapon.firstb.stopAllActions();
+		}
+	},
+	/**
+	 * start fire
+	 * @param weapon:sprite the weapon
+	 * @param angle:number the weapon rotate
+	 */
+	shooting:function(weapon, angle)
+	{
+		this.isShooting = false;
+		var bullet =new CreateBottleBullet(weapon.getPosition());
+		bullet.buttle.setRotation(angle);
+		this.collisionLayer.addChild(bullet.buttle, 10);
+		this.bulletArr.push(bullet.buttle);
+	},
+	//handle shooting
+	handleShooting:function()
+	{
+		this.schedule(this.shootingIntervalTime, 0.5);
+	},
+	//the shooting inverval times 0.5 secound
+	shootingIntervalTime:function()
+	{
+		this.isShooting = true;
 	}
 });
 
