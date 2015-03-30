@@ -12,8 +12,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.setSpriteLayer();
 		this.findLuoboRoad();
 //		this.playStartEffect();//the monster start move effect
-		this.moveMonster();
 		this.scheduleUpdate();
+		this.moveMonster();
 		this.addTouchEventListener(this.touchLayerFunc, this);
 		this.bulletArr = [];
 		this.weaponArr = [];
@@ -98,6 +98,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	//monster move to stage road
 	moveMonster:function()
 	{
+		this.dispatchMonster = false;
 		this.monsterArr = [];
 		var monster = this.getMonster("fly_yellow01.png", "fly_yellow02.png");
 		this.startMove(1,monster.monster);
@@ -107,7 +108,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 			var monster = this.getMonster("fly_yellow01.png", "fly_yellow02.png");
 			this.startMove(1,monster.monster);
 			this.monsterArr.push(monster);
-		}, 1, 6);
+		}, 1, 5);
 	},
 	startMove:function(n, flay)
 	{ 
@@ -251,6 +252,14 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.checkCollision();
 		this.refreshPointAnimationPos();
 		this.checkBulletCollision();
+		if( this.monsterArr.length < 1 && !this.dispatchMonster )
+		{
+			this.dispatchMonster = true;
+			this.scheduleOnce(function()
+			{
+				this.moveMonster();
+			}, 3);
+		}
 	},
 	//check collision
 	checkCollision:function()
@@ -266,7 +275,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				{
 					if(this.pointTemp == this.monsterArr[i].monster)
 					{
-						this.getPointAnimate(cc.p(5000, 5000), this.monsterArr[i].monster);
+						getPointAnimate(cc.p(5000, 5000), this.monsterArr[i].monster, this);
 						this.pointTemp = null;
 					}
 					this.monsterArr[i].monster.removeFromParent();
@@ -354,20 +363,20 @@ var LuoboLevel01 = ccui.Layout.extend(
 			{
 				if(this.pointTemp != target)
 				{
-					this.getPointAnimate(target.getPosition(), target);
+					getPointAnimate(target.getPosition(), target, this);
 					this.pointTemp = target;
 				}
 				else//hide the pointAnimation
 				{
-					this.hidePointAnimation();
+					hidePointAnimation(this);
 				}
 			}
 			else
 			{
-				this.getPointAnimate(target.getPosition(), target);
+				getPointAnimate(target.getPosition(), target, this);
 				this.pointTemp = target;
 			}
-			this.hideAddWeaponAnimate();//hide the add animation
+			hideAddWeaponAnimate(this);//hide the add animation
 			this.hideWeaponLayout();//hide the weapon layout
 		}
 	},
@@ -376,22 +385,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(this.pointTemp)
 		{
-			this.getPointAnimate(this.pointTemp.getPosition(), this.pointTemp);
+			getPointAnimate(this.pointTemp.getPosition(), this.pointTemp, this);
 		}
-	},
-	//hide the point animation
-	hidePointAnimation:function()
-	{
-		if(this.pointAnimate)
-		{
-			this.pointTemp = null;
-			this.pointAnimate.setPosition(cc.p(5000, 5000));
-		}
-	},
-	//hide add weapon animation
-	hideAddWeaponAnimate:function()
-	{
-		this.getAddWeaponAnimate(cc.p(5000, 5000));
 	},
 	// touch eventlistener for this 
 	touchLayerFunc:function(target, state)
@@ -408,7 +403,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				if(cc.rectContainsPoint(rect, p))
 				{
 					this.hideWeaponLayout();
-					this.hideAddWeaponAnimate();
+					hideAddWeaponAnimate(this);
 					this.luobo.stopAllActions();
 					this.luobo.runAction(this.getLuoboAnimation(1));
 					return;
@@ -432,7 +427,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				var recta = this.addRect.getBoundingBox();
 				if(cc.rectContainsPoint(recta, p))
 				{
-					this.hideAddWeaponAnimate();
+					hideAddWeaponAnimate(this);
 					this.hideWeaponLayout();
 					return;
 				}
@@ -444,15 +439,15 @@ var LuoboLevel01 = ccui.Layout.extend(
 				var rect2 = cc.rect(this.tmxOGArr[i].x,this.tmxOGArr[i].y,this.tmxOGArr[i].width,this.tmxOGArr[i].height);
 				if(cc.rectContainsPoint(rect2, p))
 				{
-					this.getAddWeaponAnimate(cc.p(xx, yy));
+					getAddWeaponAnimate(cc.p(xx, yy), this);
 					this.getWeaponLayout(cc.p(xx, yy));
 					return;
 				}
 				else if(i === this.tmxOGArr.length-1)
 				{
-					this.hideAddWeaponAnimate();
+					hideAddWeaponAnimate(this);
 					this.hideWeaponLayout();
-					this.getForbideAnimation(cc.p(xx, yy));
+					getForbideAnimation(cc.p(xx, yy), this);
 				}
 			}
 		}
@@ -512,97 +507,6 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.collisionLayer = cc.Layer.create();
 		this.collisionLayer.setContentSize(Default.windowSize());
 		this.addChild(this.collisionLayer, 30);
-	},
-	//select target play the point animate, show current touch target is selected
-	getPointAnimate:function(point, target)
-	{
-		if(this.pointAnimate)
-		{
-			this.pointAnimate.setPosition(cc.p(point.x,point.y+target.height/2));
-			return;
-		}
-		var animation = [];
-		this.pointAnimate = cc.Sprite.createWithSpriteFrameName("point01.png");
-		this.addChild(this.pointAnimate, 40);
-		this.pointAnimate.setPosition(cc.p(point.x,point.y+target.height/2));
-		for(var i = 1; i< 4; i++)
-		{
-			var spriteFrame = cc.spriteFrameCache.getSpriteFrame("point0"+i+".png");
-			animation.push(spriteFrame);
-		}
-		var animationn = cc.Animation.create(animation, 0.2);
-		var animate = cc.Animate.create(animationn);
-		var delayTime = cc.DelayTime.create(0.5);
-		var sequnce = cc.sequence(animate, delayTime);
-		this.pointAnimate.runAction(sequnce.repeatForever());
-	},
-	//when touch empty point on stage, play add shape animate
-	getAddWeaponAnimate:function(point)
-	{
-		if(this.addRect)
-		{
-			this.addRect.setPosition(point);
-			return;
-		}
-		var animation = [];
-		this.addRect = cc.Sprite.createWithSpriteFrameName("select_00.png");
-		this.addChild(this.addRect, 20);
-		this.addRect.setPosition(point);
-		for(var i= 0; i < 5; i++)
-		{
-			var spriteFrame = cc.spriteFrameCache.getSpriteFrame("select_0"+i+".png");
-			animation.push(spriteFrame);
-		}
-		var animationn = cc.Animation.create(animation, 0.1);
-		var animate = cc.Animate.create(animationn);
-		this.addRect.runAction(animate.repeatForever());
-	},
-	//touch the current local that forbide install the weapon
-	getForbideAnimation:function(point)
-	{
-		var fadeOut = cc.FadeOut.create(0.2);
-		var callFunc = cc.callFunc(function()
-		{
-			this.forbideAnimation.setPosition(cc.p(5000, 5000));
-			var fadeIn = cc.FadeIn.create(0.1);
-			this.forbideAnimation.runAction(fadeIn);
-		}, this);
-		var sequence = cc.sequence(fadeOut, callFunc);
-		
-		if(this.forbideAnimation)
-		{
-			this.forbideAnimation.stopAllActions();
-			this.forbideAnimation.setPosition(point);
-			this.forbideAnimation.runAction(sequence);
-			return;
-		}
-		
-		this.forbideAnimation = cc.Sprite.createWithSpriteFrameName("forbidden.png");
-		this.forbideAnimation = cc.Sprite.createWithSpriteFrameName("forbidden.png");
-		this.forbideAnimation.setPosition(point);
-		this.addChild(this.forbideAnimation, 1000);
-		this.forbideAnimation.runAction(sequence);
-	},
-	//air animaton effect
-	getAirAnimateion:function(point)
-	{
-		var animation = [];
-		this.airAnimation = cc.Sprite.createWithSpriteFrameName("air11.png");
-		this.addChild(this.airAnimation, 25);
-		this.airAnimation.setPosition(point);
-		for(var i = 11; i < 16; i++)
-		{
-			var spriteFrame = cc.spriteFrameCache.getSpriteFrame("air"+i+".png");
-			animation.push(spriteFrame);
-		}
-		var animationn = cc.Animation.create(animation, 0.1);
-		var animate = cc.Animate.create(animationn);
-		var callFunc = cc.callFunc(function()
-		{
-			this.airAnimation.removeFromParent();
-		}, this);
-		var sequence = cc.sequence(animate, callFunc);
-		this.airAnimation.runAction(sequence);
 	},
 	//level01 weapon
 	getWeaponLayout:function(point)
@@ -682,10 +586,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(state === ccui.Widget.TOUCH_ENDED)
 		{
-			this.getAirAnimateion(this.addRect.getPosition());
+			getAirAnimateion(this.addRect.getPosition(), this);
 			this.installWeapon(target.name);
 			this.hideWeaponLayout();
-			this.hideAddWeaponAnimate();
+			hideAddWeaponAnimate(this);
 		}
 	},
 	//handle weapon point that can show weapon layout all when its stay left/right/top/bottom
@@ -775,7 +679,6 @@ var LuoboLevel01 = ccui.Layout.extend(
 		bottleWeapon.base.setPosition(point);
 		bottleWeapon.base.addTouchEventListener(this.bottleWeaponfunc, this);
 		bottleWeapon.firstb.setPosition(point);
-//		bottleWeapon.firstb.runAction(bottleWeapon.animationn.repeatForever());
 		bottleWeapon.base.runRotation = bottleWeapon.firstb.getRotation();
 		
 		var circle = cc.DrawNode.create();
@@ -797,7 +700,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	},
 	bottleWeaponfunc:function(target, state)
 	{
-		if(state === ccui.Widget.TOUCH_ENDED)
+		if( state === ccui.Widget.TOUCH_ENDED )
 		{
 		}
 	},
@@ -808,6 +711,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			for(var i = 0;i < this.bulletArr.length; i++)
 			{
+				if( !this.bulletArr[i] ){return;}
 				var angle = this.bulletArr[i].getRotation()/180*Math.PI;
 				var speed= 5;
 				this.bulletArr[i].y+=Math.cos(angle)*speed;
@@ -821,6 +725,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				//check collision of both bullet and monster
 				for(var j = 0,len = this.monsterArr.length; j < len; j++)
 				{
+					if( !this.monsterArr[j].monster ){return;}
 					var rect2 = this.monsterArr[j].monster.getBoundingBox(),
 						pp	  = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
 					if( cc.rectContainsPoint(rect2, pp) )
@@ -831,6 +736,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 						this.monsterArr[j].blood.setPercent(this.monsterArr[j].blood.getPercent()-15);
 						if( this.monsterArr[j].blood.getPercent() <= 0 )
 						{
+							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
 							this.monsterArr[j].monster.removeFromParent();
 							this.monsterArr.splice(j, 1);
 						}

@@ -16,6 +16,7 @@
         "src/zfs/base/GlobalVar.js",
         "src/zfs/base/BaseButton.js",
         "src/zfs/base/BaseScene.js",
+        "src/zfs/module/themes/LuoboAnimation.js",
         "src/zfs/module/themes/LuoBoThemesScene.js",
         "src/zfs/module/themes/LuoBoWeaponCreate.js",
         "src/zfs/module/themes/themes01/LuoboThemesScene01.js",
