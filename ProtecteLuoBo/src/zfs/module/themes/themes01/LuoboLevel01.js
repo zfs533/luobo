@@ -456,12 +456,6 @@ var LuoboLevel01 = ccui.Layout.extend(
 	zinit:function()
 	{
 		this.setSize(Default.windowSize());
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG0/BG1-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG1/BG-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Monsters01-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Items/Items01-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Items/Items02-hd.plist");
 		
 		var background = cc.Sprite.createWithSpriteFrameName("BG1.png");
 		background.setPosition(this.width/2, this.height/2);
@@ -679,7 +673,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 		bottleWeapon.base.setPosition(point);
 		bottleWeapon.base.addTouchEventListener(this.bottleWeaponfunc, this);
 		bottleWeapon.firstb.setPosition(point);
-		bottleWeapon.base.runRotation = bottleWeapon.firstb.getRotation();
+		this.collisionLayer.addChild(bottleWeapon.base, 0);
+		this.collisionLayer.addChild(bottleWeapon.firstb, 0);
+		this.weaponArr.push(bottleWeapon);
+		
+		
 		
 		var circle = cc.DrawNode.create();
 		var center = point;
@@ -692,16 +690,13 @@ var LuoboLevel01 = ccui.Layout.extend(
 		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
 		this.collisionLayer.addChild(circle, 0);
 		bottleWeapon.circle = circle;
-		
-		this.collisionLayer.addChild(bottleWeapon.base, 0);
-		this.collisionLayer.addChild(bottleWeapon.firstb, 0);
-		
-		this.weaponArr.push(bottleWeapon);
 	},
+	//handle touch the bullet base event
 	bottleWeaponfunc:function(target, state)
 	{
 		if( state === ccui.Widget.TOUCH_ENDED )
 		{
+			
 		}
 	},
 	//check bullet collision

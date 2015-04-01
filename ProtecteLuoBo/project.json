@@ -13,6 +13,7 @@
         "src/resource.js",
         "src/app.js",
         "src/zfs/base/Default.js",
+        "src/zfs/base/LoadPlistSource.js",
         "src/zfs/base/GlobalVar.js",
         "src/zfs/base/BaseButton.js",
         "src/zfs/base/BaseScene.js",

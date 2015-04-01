@@ -2,9 +2,6 @@
  * zfs@weapon create constructor
  */
 var LuoBoWeaponCreate = {};
-cc.spriteFrameCache.addSpriteFrames("res/Themes/Towers/TBottle-hd.plist");
-cc.spriteFrameCache.addSpriteFrames("res/Themes/Towers/TFireBottle-hd.plist");
-cc.spriteFrameCache.addSpriteFrames("res/Themes/Towers/TBall-hd.plist");
 /*
  * bottle constructor
  */

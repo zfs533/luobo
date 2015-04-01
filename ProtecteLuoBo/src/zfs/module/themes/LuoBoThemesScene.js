@@ -13,10 +13,6 @@ var LuoBoThemesScene = ccui.Layout.extend(
 	},
 	zinit:function()
 	{
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene1-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene2-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene3-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene4-hd.plist");
 		this.setSize(Default.windowSize());
 		
 		var background = ccui.ImageView.create("theme_bg.png", ccui.Widget.PLIST_TEXTURE);
