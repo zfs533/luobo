@@ -33,7 +33,6 @@ LuoBoWeaponCreate.createBottleFirst = function()
 		var animate = cc.Animate.create(animationn);
 		return animate;
 	}();
-	first.circle = null;//fight around circle
 	first.radius = 200;//fight radius;
 	return first;
 };

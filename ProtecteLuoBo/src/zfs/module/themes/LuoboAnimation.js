@@ -121,10 +121,51 @@ function hideAddWeaponAnimate(that)
 	getAddWeaponAnimate(cc.p(5000, 5000), that);
 };
 
+/**
+ * handle the wenpon shooting range to show
+ * @param that
+ * @param type
+ * @returns
+ */
+function handleShootingRange(that, type)
+{
+	var range;
+	if ( type === 1 )
+	{
+		range = cc.Sprite.createWithSpriteFrameName("range_80.png");
+	}
+	else if ( type === 2 )
+	{
+		range = cc.Sprite.createWithSpriteFrameName("range_100.png");
+	}
+	else if ( type === 3 )
+	{
+		range = cc.Sprite.createWithSpriteFrameName("range_120.png");
+	}
+	range.scale = 0;
+	var scaleTo = cc.scaleTo(0.2, 1, 1);
+	range.runAction(scaleTo);
+	return range;
+};
 
-
-
-
+/**
+ * remove range
+ * @param that
+ * @param range
+ */
+function hangleRemoveRange(that, range)
+{
+	if ( range )
+	{
+		var scaleTo = cc.scaleTo(0.2, 0, 0);
+		var callFunc = cc.callFunc(function()
+		{
+			range.removeFromParent();
+		}, that);
+		var sequnce = cc.sequence(scaleTo, callFunc);
+		range.runAction(sequnce);
+	}
+};
 
 
 

@@ -15,6 +15,7 @@ cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist")
 cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Monsters01-hd.plist");
 cc.spriteFrameCache.addSpriteFrames("res/Themes/Items/Items01-hd.plist");
 cc.spriteFrameCache.addSpriteFrames("res/Themes/Items/Items02-hd.plist");
+cc.spriteFrameCache.addSpriteFrames("res/Themes/Items/Items00-hd.plist");
 
 /*
  * @zfs protected luobo themes scene 2015/1/5
@@ -23,6 +24,5 @@ cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene1-hd.plist");
 cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene2-hd.plist");
 cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene3-hd.plist");
 cc.spriteFrameCache.addSpriteFrames("res/Themes/scene/themescene4-hd.plist");
-
 
 

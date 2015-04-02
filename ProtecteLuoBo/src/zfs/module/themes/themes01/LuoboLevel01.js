@@ -17,6 +17,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.addTouchEventListener(this.touchLayerFunc, this);
 		this.bulletArr = [];
 		this.weaponArr = [];
+		this.rangeArr  = [];
+		this.tempWeapon = null;
 		this.handleShooting();//handle shooting
 	},
 	//tmxtiled map
@@ -24,9 +26,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		this.tmxTiled = cc.TMXTiledMap.create("res/Themes/Theme1/BG1/BGPath.tmx");
 		this.addChild(this.tmxTiled, 100);
-		
 		this.tmxObjectGroups = this.tmxTiled.getObjectGroups()[0];//cc.TMXObjectGroup
-
 		this.tmxOGArr = this.tmxObjectGroups.getObjects();//array
 		for( var mm in this.tmxObjectGroups.getObject("Obj1"))
 		{
@@ -359,6 +359,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			this.handleRangeArray();
 			if(this.pointTemp)
 			{
 				if(this.pointTemp != target)
@@ -393,6 +394,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(state === ccui.Widget.TOUCH_ENDED)
 		{
+			this.handleRangeArray();
 			var p = this.getTouchStartPos();
 			var xx = Math.floor(p.x/80)*80+40;
 			var yy = Math.floor(p.y/80)*80+40;
@@ -618,6 +620,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			this.handleRangeArray();
 			if(this.isPause)
 			{
 				this.isPause = false;
@@ -639,6 +642,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			this.handleRangeArray();
 			if(this.isAddSpeed)
 			{
 				this.isAddSpeed = false;
@@ -673,15 +677,15 @@ var LuoboLevel01 = ccui.Layout.extend(
 		bottleWeapon.base.setPosition(point);
 		bottleWeapon.base.addTouchEventListener(this.bottleWeaponfunc, this);
 		bottleWeapon.firstb.setPosition(point);
-		this.collisionLayer.addChild(bottleWeapon.base, 0);
-		this.collisionLayer.addChild(bottleWeapon.firstb, 0);
+		this.collisionLayer.addChild(bottleWeapon.base, 100);
+		this.collisionLayer.addChild(bottleWeapon.firstb, 100);
 		this.weaponArr.push(bottleWeapon);
 		
 		
 		
 		var circle = cc.DrawNode.create();
 		var center = point;
-		var radius = bottleWeapon.radius;
+		var radius = weaponData.radius;
 		var angle = 0;
 		var segments= 300;
 		var drawLineToCenter = false;
@@ -689,14 +693,33 @@ var LuoboLevel01 = ccui.Layout.extend(
 		var color = cc.color(255, 0, 0, 255);
 		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
 		this.collisionLayer.addChild(circle, 0);
-		bottleWeapon.circle = circle;
 	},
 	//handle touch the bullet base event
 	bottleWeaponfunc:function(target, state)
 	{
 		if( state === ccui.Widget.TOUCH_ENDED )
 		{
+			this.handleRangeArray();
+			if ( this.tempWeapon && this.tempWeapon === target )
+			{
+				this.handleRangeArray();
+				this.tempWeapon = null;
+				return;
+			}
+			var range = handleShootingRange(this, weaponData.type);
+			this.collisionLayer.addChild(range, 50);
+			range.setPosition(target.getPosition());
+			this.rangeArr.push(range);
 			
+			this.tempWeapon = target;
+		}
+	},
+	handleRangeArray:function()
+	{
+		for ( var i = 0; i < this.rangeArr.length; i++ )
+		{
+			hangleRemoveRange(this, this.rangeArr[i]);
+			this.rangeArr.splice(i, 1);
 		}
 	},
 	//check bullet collision
@@ -761,13 +784,13 @@ var LuoboLevel01 = ccui.Layout.extend(
 			var P1 = this.monsterArr[i].monster.getPosition();
 			var P2 = weapon.firstb.getPosition();
 			var distance = cc.pDistance(P1,P2);
-			if(distance <= weapon.radius)
+			if(distance <= weaponData.radius)
 			{
 				// fight the first monster
 				break;
 			}
 		}
-		if(distance <= weapon.radius)
+		if(distance <= weaponData.radius)
 		{
 			var angle = Math.atan2(P1.x - P2.x, P1.y - P2.y);
 			angle = angle*180/Math.PI;
