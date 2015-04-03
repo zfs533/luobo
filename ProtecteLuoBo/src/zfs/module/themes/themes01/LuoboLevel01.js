@@ -20,6 +20,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.rangeArr  = [];
 		this.tempWeapon = null;
 		this.handleShooting();//handle shooting
+//		var img = ccui.ImageView.create("upgrade_-180.png", ccui.Widget.PLIST_TEXTURE);
+//		img.x = img.y  = 300;
+//		this.addChild(img, 100);
 	},
 	//tmxtiled map
 	handleTMXtileMap:function()
@@ -675,6 +678,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		var point = this.addRect.getPosition();
 		var bottleWeapon = LuoBoWeaponCreate.createBottleFirst();
 		bottleWeapon.base.setPosition(point);
+		bottleWeapon.base.id = bottleWeapon.id;
 		bottleWeapon.base.addTouchEventListener(this.bottleWeaponfunc, this);
 		bottleWeapon.firstb.setPosition(point);
 		this.collisionLayer.addChild(bottleWeapon.base, 100);
@@ -685,7 +689,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		
 		var circle = cc.DrawNode.create();
 		var center = point;
-		var radius = weaponData.radius;
+		var radius = getBottleData().radius;
 		var angle = 0;
 		var segments= 300;
 		var drawLineToCenter = false;
@@ -706,7 +710,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				this.tempWeapon = null;
 				return;
 			}
-			var range = handleShootingRange(this, weaponData.type);
+			var range = handleShootingRange(this, PlayerData.weaponType, target.id);
 			this.collisionLayer.addChild(range, 50);
 			range.setPosition(target.getPosition());
 			this.rangeArr.push(range);
@@ -784,13 +788,13 @@ var LuoboLevel01 = ccui.Layout.extend(
 			var P1 = this.monsterArr[i].monster.getPosition();
 			var P2 = weapon.firstb.getPosition();
 			var distance = cc.pDistance(P1,P2);
-			if(distance <= weaponData.radius)
+			if(distance <= getBottleData().radius)
 			{
 				// fight the first monster
 				break;
 			}
 		}
-		if(distance <= weaponData.radius)
+		if(distance <= getBottleData().radius)
 		{
 			var angle = Math.atan2(P1.x - P2.x, P1.y - P2.y);
 			angle = angle*180/Math.PI;

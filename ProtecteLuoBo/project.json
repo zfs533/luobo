@@ -12,6 +12,7 @@
     "jsList":[
         "src/resource.js",
         "src/app.js",
+        "src/zfs/dataManager/LuoboPlayerData.js",
         "src/zfs/base/Default.js",
         "src/zfs/base/LoadPlistSource.js",
         "src/zfs/base/GlobalVar.js",

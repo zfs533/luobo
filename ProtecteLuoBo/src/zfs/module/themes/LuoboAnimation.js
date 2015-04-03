@@ -125,27 +125,79 @@ function hideAddWeaponAnimate(that)
  * handle the wenpon shooting range to show
  * @param that
  * @param type
+ * @param id
  * @returns
  */
-function handleShootingRange(that, type)
+function handleShootingRange(that, type, id)
 {
 	var range;
-	if ( type === 1 )
+	
+	for ( var i = 0; i < RangeData.length; i++ )
 	{
-		range = cc.Sprite.createWithSpriteFrameName("range_80.png");
+		if ( type === RangeData[i].type )
+		{
+			range = cc.Sprite.createWithSpriteFrameName(RangeData[i].range);
+			range.scale = 0;
+			var scaleTo = cc.scaleTo(0.2, 1, 1);
+			range.runAction(scaleTo);
+			if ( PlayerData.gold < RangeData[i].up )
+			{
+				var up = ccui.ImageView.create(RangeData[i].upTexture1, ccui.Widget.PLIST_TEXTURE);
+				up.addTouchEventListener(cancelUpgradeWeapon, that);
+			}
+			else
+			{
+				var up = ccui.ImageView.create(RangeData[i].upTexture, ccui.Widget.PLIST_TEXTURE);
+				up.addTouchEventListener(upgradeWeapon, that);
+			}
+			var sell = ccui.ImageView.create(RangeData[i].sellTexture, ccui.Widget.PLIST_TEXTURE);
+			up.x = sell.x = range.width/2;
+			up.y = range.height - up.height/2;
+			sell.y = sell.height/2;
+			range.addChild(up, 0);
+			range.addChild(sell, 0);
+			sell.addTouchEventListener(sellWeapon, that);
+			
+			return range;
+		}
 	}
-	else if ( type === 2 )
+};
+
+/**
+ * 升级武器
+ * @param target
+ * @param state
+ */
+function upgradeWeapon(target, state)
+{
+	if ( state === ccui.Widget.TOUCH_ENDED )
 	{
-		range = cc.Sprite.createWithSpriteFrameName("range_100.png");
 	}
-	else if ( type === 3 )
+};
+
+/**
+ * 取消升级武器
+ * @param target
+ * @param state
+ */
+function cancelUpgradeWeapon(target, state)
+{
+	if ( state === ccui.Widget.TOUCH_ENDED )
 	{
-		range = cc.Sprite.createWithSpriteFrameName("range_120.png");
+		this.handleRangeArray();
 	}
-	range.scale = 0;
-	var scaleTo = cc.scaleTo(0.2, 1, 1);
-	range.runAction(scaleTo);
-	return range;
+};
+
+/**
+ * 贩卖武器
+ * @param target
+ * @param state
+ */
+function sellWeapon(target, state)
+{
+	if ( state === ccui.Widget.TOUCH_ENDED )
+	{
+	}
 };
 
 /**

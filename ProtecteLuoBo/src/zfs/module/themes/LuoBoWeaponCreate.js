@@ -19,6 +19,7 @@ LuoBoWeaponCreate.createBottle = function()
 LuoBoWeaponCreate.createBottleFirst = function()
 {
 	var first = {};
+	first.id = weaponIndex++;
 	first.base = ccui.ImageView.create("Bottle-11.png", ccui.Widget.PLIST_TEXTURE);
 	first.firstb = cc.Sprite.createWithSpriteFrameName("Bottle11.png");
 	first.animationn = function()
@@ -33,7 +34,6 @@ LuoBoWeaponCreate.createBottleFirst = function()
 		var animate = cc.Animate.create(animationn);
 		return animate;
 	}();
-	first.radius = 200;//fight radius;
 	return first;
 };
 // animation for bottle weapon
