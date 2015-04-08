@@ -131,7 +131,6 @@ function hideAddWeaponAnimate(that)
 function handleShootingRange(that, type, id)
 {
 	var range;
-	
 	for ( var i = 0; i < RangeData.length; i++ )
 	{
 		if ( type === RangeData[i].type )
@@ -140,24 +139,40 @@ function handleShootingRange(that, type, id)
 			range.scale = 0;
 			var scaleTo = cc.scaleTo(0.2, 1, 1);
 			range.runAction(scaleTo);
-			if ( PlayerData.gold < RangeData[i].up )
+			if ( type === 3 )
+			{
+				var up = ccui.ImageView.create(RangeData[i].upTexture, ccui.Widget.PLIST_TEXTURE);
+				up.addTouchEventListener(function(target,state)
+				{
+					cancelUpgradeWeapon(target, state, id, that);
+				}, that);
+			}
+			else if ( PlayerData.gold < RangeData[i].up )
 			{
 				var up = ccui.ImageView.create(RangeData[i].upTexture1, ccui.Widget.PLIST_TEXTURE);
-				up.addTouchEventListener(cancelUpgradeWeapon, that);
+				up.addTouchEventListener(function(target,state)
+				{
+					cancelUpgradeWeapon(target, state, id, that);
+				}, that);
 			}
 			else
 			{
 				var up = ccui.ImageView.create(RangeData[i].upTexture, ccui.Widget.PLIST_TEXTURE);
-				up.addTouchEventListener(upgradeWeapon, that);
+				up.addTouchEventListener(function(target, state)
+				{
+					upgradeWeapon(target, state ,id, that, RangeData[i].up);
+				}, that);
 			}
 			var sell = ccui.ImageView.create(RangeData[i].sellTexture, ccui.Widget.PLIST_TEXTURE);
 			up.x = sell.x = range.width/2;
-			up.y = range.height - up.height/2;
-			sell.y = sell.height/2;
+			up.y = up.height/2 + (up.height +range.height)/2;
+			sell.y = range.height/2 - sell.height;
 			range.addChild(up, 0);
 			range.addChild(sell, 0);
-			sell.addTouchEventListener(sellWeapon, that);
-			
+			sell.addTouchEventListener(function(target, state)
+			{
+				sellWeapon(target, state, id, that, RangeData[i].sell);
+			}, that);
 			return range;
 		}
 	}
@@ -168,10 +183,19 @@ function handleShootingRange(that, type, id)
  * @param target
  * @param state
  */
-function upgradeWeapon(target, state)
+function upgradeWeapon(target, state, id, that, gold)
 {
 	if ( state === ccui.Widget.TOUCH_ENDED )
 	{
+		PlayerData.weaponType++;
+		if ( PlayerData.weaponType > 3 )
+		{
+			PlayerData.weaponType = 3;
+		}
+		sellWeapon(target, state, id, that);
+		that.handleLuoboWeaponBottle(target.getParent().getPosition());
+		PlayerData.gold -= gold;
+		that.showGoldNumber();
 	}
 };
 
@@ -180,11 +204,11 @@ function upgradeWeapon(target, state)
  * @param target
  * @param state
  */
-function cancelUpgradeWeapon(target, state)
+function cancelUpgradeWeapon(target, state, id, that)
 {
 	if ( state === ccui.Widget.TOUCH_ENDED )
 	{
-		this.handleRangeArray();
+		that.handleRangeArray();
 	}
 };
 
@@ -193,10 +217,27 @@ function cancelUpgradeWeapon(target, state)
  * @param target
  * @param state
  */
-function sellWeapon(target, state)
+function sellWeapon(target, state, id, that, gold)
 {
 	if ( state === ccui.Widget.TOUCH_ENDED )
 	{
+		for ( var i = 0;i < that.weaponArr.length; i++ )
+		{
+			if ( that.weaponArr[i].id === id )
+			{
+				getAirAnimateion(that.weaponArr[i].base.getPosition(), that);
+				that.handleRangeArray();
+				that.weaponArr[i].base.removeFromParent();
+				that.weaponArr[i].firstb.removeFromParent();
+				that.weaponArr.splice(i, 1);
+				if ( gold )
+				{
+					PlayerData.gold += gold;
+					that.showGoldNumber();
+				}
+				break;
+			}
+		}
 	}
 };
 
@@ -219,7 +260,24 @@ function hangleRemoveRange(that, range)
 	}
 };
 
-
+/**
+ * 升级提升动画
+ */
+function showUpgradeAnimation()
+{
+	var showUA = cc.Sprite.createWithSpriteFrameName("showupgrade01.png");
+	showUA.setPosition(p.x, p.y);
+	showUA.speed = 3;
+	var animation = [];
+	for(var i = 1; i < 3; i++)
+	{
+		var spriteFrame = cc.spriteFrameCache.getSpriteFrame("showupgrade0"+i+".png");
+		animation.push(spriteFrame);
+	}
+	var animationn = cc.Animation.create(animation, 0.2);
+	var animate = cc.Animate.create(animationn);
+	showUA.runAction(animate.repeatForever());
+};
 
 
 

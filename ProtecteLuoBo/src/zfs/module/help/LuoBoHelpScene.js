@@ -107,7 +107,7 @@ var LuoBoHelpScene = ccui.Layout.extend(
 		var bottom = ccui.ImageView.create("bottom.png", ccui.Widget.PLIST_TEXTURE);
 		bottom.setPosition(this.getSize().width/2, 40);
 		this.bottomLayout.addChild(bottom, 10);
-		this.pageNumTxt = ccui.TextAtlas.create("2024", "res/Themes/scene/bottom_num_hd.png", 16, 30, "/");
+		this.pagTxteNum = ccui.TextAtlas.create("2024", "res/Themes/scene/bottom_num_hd.png", 16, 30, "/");
 		this.pageNumTxt.setPosition(cc.p(this.getSize().width/2, 40));
 		this.bottomLayout.addChild(this.pageNumTxt, 10);
 	},

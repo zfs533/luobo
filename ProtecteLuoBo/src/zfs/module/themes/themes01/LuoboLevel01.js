@@ -20,7 +20,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.rangeArr  = [];
 		this.tempWeapon = null;
 		this.handleShooting();//handle shooting
-//		var img = ccui.ImageView.create("upgrade_-180.png", ccui.Widget.PLIST_TEXTURE);
+		this.showGoldNumber();
+//		var img = ccui.ImageView.create("upgrade_0_CN.png", ccui.Widget.PLIST_TEXTURE);
 //		img.x = img.y  = 300;
 //		this.addChild(img, 100);
 	},
@@ -474,6 +475,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 		menuBG.setPosition(this.width/2, this.height-menuBG.height/2);
 		this.addChild(menuBG, 0);
 		
+		this.pageNumTxt = ccui.TextAtlas.create(PlayerData.gold, "res/Themes/Items/labelatlas.png", 17, 22, "0");
+		this.pageNumTxt.setAnchorPoint(0, 0.5);
+		this.pageNumTxt.setPosition(cc.p(110, Default.windowHeight() - 30));
+		this.addChild(this.pageNumTxt, 10);
+		
 		//monster wave nuber background
 		this.menuCenter = cc.Sprite.createWithSpriteFrameName("MenuCenter_01_CN.png");
 		this.menuCenter.setPosition(this.width/2, this.height-this.menuCenter.height/2);
@@ -673,30 +679,31 @@ var LuoboLevel01 = ccui.Layout.extend(
 	 * handle the luobo weapon actions;for example rotate/shoot/sell
 	 * @param;parent:LuoboLevel01 class
 	 */
-	handleLuoboWeaponBottle:function()
+	handleLuoboWeaponBottle:function(point)
 	{
-		var point = this.addRect.getPosition();
-		var bottleWeapon = LuoBoWeaponCreate.createBottleFirst();
-		bottleWeapon.base.setPosition(point);
-		bottleWeapon.base.id = bottleWeapon.id;
-		bottleWeapon.base.addTouchEventListener(this.bottleWeaponfunc, this);
-		bottleWeapon.firstb.setPosition(point);
+		if ( !point )
+		{
+			point = this.addRect.getPosition();
+		}
+		cc.log(point.x+"  "+point.y);
+		var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
 		this.collisionLayer.addChild(bottleWeapon.base, 100);
 		this.collisionLayer.addChild(bottleWeapon.firstb, 100);
 		this.weaponArr.push(bottleWeapon);
+		PlayerData.gold -= bottleWeapon.value;
+		this.showGoldNumber();
 		
 		
-		
-		var circle = cc.DrawNode.create();
-		var center = point;
-		var radius = getBottleData().radius;
-		var angle = 0;
-		var segments= 300;
-		var drawLineToCenter = false;
-		var lineWidth = 10;
-		var color = cc.color(255, 0, 0, 255);
-		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
-		this.collisionLayer.addChild(circle, 0);
+//		var circle = cc.DrawNode.create();
+//		var center = point;
+//		var radius = getBottleData().radius;
+//		var angle = 0;
+//		var segments= 300;
+//		var drawLineToCenter = false;
+//		var lineWidth = 10;
+//		var color = cc.color(255, 0, 0, 255);
+//		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
+//		this.collisionLayer.addChild(circle, 0);
 	},
 	//handle touch the bullet base event
 	bottleWeaponfunc:function(target, state)
@@ -710,11 +717,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 				this.tempWeapon = null;
 				return;
 			}
-			var range = handleShootingRange(this, PlayerData.weaponType, target.id);
+			var range = new handleShootingRange(this, PlayerData.weaponType, target.id);
 			this.collisionLayer.addChild(range, 50);
 			range.setPosition(target.getPosition());
 			this.rangeArr.push(range);
-			
 			this.tempWeapon = target;
 		}
 	},
@@ -747,7 +753,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				//check collision of both bullet and monster
 				for(var j = 0,len = this.monsterArr.length; j < len; j++)
 				{
-					if( !this.monsterArr[j].monster ){return;}
+					if( !this.monsterArr[j].monster || !this.bulletArr[i] ){return;}
 					var rect2 = this.monsterArr[j].monster.getBoundingBox(),
 						pp	  = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
 					if( cc.rectContainsPoint(rect2, pp) )
@@ -798,9 +804,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			var angle = Math.atan2(P1.x - P2.x, P1.y - P2.y);
 			angle = angle*180/Math.PI;
-			weapon.firstb.stopAllActions();
-			weapon.firstb.runAction(getBottleAnimation().repeatForever());
-			weapon.firstb.setRotation(angle);
+			weapon.getBottleAnimation(PlayerData.weaponType, angle);
 			this.shooting(weapon.firstb, angle);
 		}
 		else
@@ -816,8 +820,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	shooting:function(weapon, angle)
 	{
 		this.isShooting = false;
-		var bullet =new CreateBottleBullet(weapon.getPosition());
-		bullet.buttle.setRotation(angle);
+		var bullet =new LuoboBottleBullet(weapon.getPosition(), PlayerData.weaponType, angle, this);
 		this.collisionLayer.addChild(bullet.buttle, 10);
 		this.bulletArr.push(bullet.buttle);
 	},
@@ -830,6 +833,15 @@ var LuoboLevel01 = ccui.Layout.extend(
 	shootingIntervalTime:function()
 	{
 		this.isShooting = true;
+	},
+	//show the gold number for player
+	showGoldNumber:function()
+	{
+		if ( PlayerData.gold <= 0 )
+		{
+			this.pageNumTxt.setString(0);
+		}
+		this.pageNumTxt.setString(PlayerData.gold);
 	}
 });
 
