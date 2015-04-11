@@ -127,7 +127,7 @@ function hideAddWeaponAnimate(that)
 function showUpgradeAnimation()
 {
 	var showUA = cc.Sprite.createWithSpriteFrameName("showupgrade01.png");
-	showUA.setPosition(p.x, p.y);
+//	showUA.setPosition(p.x, p.y);
 	showUA.speed = 3;
 	var animation = [];
 	for(var i = 1; i < 3; i++)
@@ -138,6 +138,7 @@ function showUpgradeAnimation()
 	var animationn = cc.Animation.create(animation, 0.2);
 	var animate = cc.Animate.create(animationn);
 	showUA.runAction(animate.repeatForever());
+	return showUA;
 };
 
 

@@ -9,11 +9,15 @@ var LuoboBottleWeapon = cc.Sprite.extend(
 		this.type = type;
 		this.point = point;
 		this.that = that;
-		this.attack = 0;//伤害
+		this.attack = 0;//attack value
 		this.id = weaponIndex++;
 		this.value = 100;
+		this.upGradeValue = 0;
+		this.upAnimate = null;// the upgrade hink
+		this.isMax = false;//the hightest level
 		this.setInformation();
 		this.handleWeaponAttack();
+		this.jugementUpgrade();
 		
 	},
 	setInformation:function()
@@ -58,14 +62,17 @@ var LuoboBottleWeapon = cc.Sprite.extend(
 		switch (this.type) 
 		{
 		case 1:
+			this.upGradeValue = getBottleData(this.type).up;
 			this.attack = 15;
 			break;
 			
 		case 2:
+			this.upGradeValue = getBottleData(this.type).up;
 			this.attack = 45;
 			break;
 			
 		case 3:
+			this.upGradeValue = getBottleData(this.type).up;
 			this.attack = 60;
 			break;
 			
@@ -136,6 +143,29 @@ var LuoboBottleWeapon = cc.Sprite.extend(
 			break;
 		}
 		this.firstb.runAction(animate);
+	},
+	/**
+	 * jugement the wenpon is or not upgrade
+	 */
+	jugementUpgrade:function()
+	{
+		if ( this.isMax ){return;}
+		if ( this.upAnimate )
+		{
+			this.upAnimate.removeFromParent();
+			this.upAnimate = null;
+			if ( this.type >= 3 )
+			{
+				this.isMax = true;
+				return;
+			}
+		}
+		if ( PlayerData.gold >= this.upGradeValue )
+		{
+			this.upAnimate = showUpgradeAnimation();
+			this.base.addChild(this.upAnimate, 10);
+			this.upAnimate.setPosition(this.base.width/2, this.base.height+20);
+		}
 	}
 });
 
@@ -162,25 +192,25 @@ function handleShootingRange(that, type, id)
 			{
 				var up = ccui.ImageView.create(RangeData[i].upTexture, ccui.Widget.PLIST_TEXTURE);
 				up.addTouchEventListener(function(target,state)
-						{
+				{
 					cancelUpgradeWeapon(target, state, id, that);
-						}, that);
+				}, that);
 			}
 			else if ( PlayerData.gold < RangeData[i].up )
 			{
 				var up = ccui.ImageView.create(RangeData[i].upTexture1, ccui.Widget.PLIST_TEXTURE);
 				up.addTouchEventListener(function(target,state)
-						{
+				{
 					cancelUpgradeWeapon(target, state, id, that);
-						}, that);
+				}, that);
 			}
 			else
 			{
 				var up = ccui.ImageView.create(RangeData[i].upTexture, ccui.Widget.PLIST_TEXTURE);
 				up.addTouchEventListener(function(target, state)
-						{
+				{
 					upgradeWeapon(target, state ,id, that, RangeData[i].up);
-						}, that);
+				}, that);
 			}
 			var sell = ccui.ImageView.create(RangeData[i].sellTexture, ccui.Widget.PLIST_TEXTURE);
 			up.x = sell.x = range.width/2;
@@ -189,9 +219,9 @@ function handleShootingRange(that, type, id)
 			range.addChild(up, 0);
 			range.addChild(sell, 0);
 			sell.addTouchEventListener(function(target, state)
-					{
+			{
 				sellWeapon(target, state, id, that, RangeData[i].sell);
-					}, that);
+			}, that);
 			return range;
 		}
 	}

@@ -15,23 +15,8 @@ var LuoboMonster = cc.Sprite.extend(
 	{
 		this.monster = null;
 		this.bloodBar = null;
-		this.gold = Math.random()*50 + 30;
-		this.textureArr = [
-		                   {t1:"fly_yellow01.png", t2:"fly_yellow02.png"},
-		                   {t1:"fly_boss_yellow01.png", t2:"fly_boss_yellow02.png"},
-		                   
-		                   {t1:"fly_blue01.png", t2:"fly_blue02.png"},
-		                   {t1:"fly_boss_blue01.png", t2:"fly_boss_blue02.png"},
-		                   
-		                   {t1:"fat_green01.png", t2:"fat_green02.png"},
-		                   {t1:"fat_boss_green01.png", t2:"fat_boss_green02.png"},
-		                   
-		                   {t1:"land_boss_nima01.png", t2:"land_boss_nima02.png"},
-		                   {t1:"land_boss_pink01.png", t2:"land_boss_pink02.png"},
-		                   {t1:"land_boss_star01.png", t2:"land_boss_star02.png"},
-		                   {t1:"boss_big01.png", t2:"boss_big02.png"},
-		                   
-		                   ];
+		this.gold = 0;
+		this.textureArr = MasterData;
 	},
 	//create monster according to the type
 	handleMonster:function()
@@ -40,7 +25,8 @@ var LuoboMonster = cc.Sprite.extend(
 		{
 			this.type = this.textureArr.length - 1;
 		}
-		var monster = this.getMonster(this.textureArr[this.type].t1, this.textureArr[this.type].t2);
+		var monster = this.getMonster(this.textureArr[this.type].texture1, this.textureArr[this.type].texture2);
+		this.gold = this.textureArr[this.type].value;
 		this.monster = monster.monster;
 		this.blood = monster.blood;
 	},

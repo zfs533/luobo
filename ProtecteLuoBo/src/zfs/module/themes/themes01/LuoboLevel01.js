@@ -342,7 +342,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	//refresh point animation current position
 	refreshPointAnimationPos:function()
 	{
-		if(this.pointTemp)
+		if( this.pointTemp )
 		{
 			getPointAnimate(this.pointTemp.getPosition(), this.pointTemp, this);
 		}
@@ -546,7 +546,6 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		if(state === ccui.Widget.TOUCH_ENDED)
 		{
-			getAirAnimateion(this.addRect.getPosition(), this);
 			this.installWeapon(target.name);
 			this.hideWeaponLayout();
 			hideAddWeaponAnimate(this);
@@ -634,13 +633,15 @@ var LuoboLevel01 = ccui.Layout.extend(
 	 * handle the luobo weapon actions;for example rotate/shoot/sell
 	 * @param;parent:LuoboLevel01 class
 	 */
-	handleLuoboWeaponBottle:function(point)
+	handleLuoboWeaponBottle:function()
 	{
-		if ( !point )
+		if ( PlayerData.gold < 100 )
 		{
-			point = this.addRect.getPosition();
+			AlertView.show("金币不足");
+			return;
 		}
-		cc.log(point.x+"  "+point.y);
+		getAirAnimateion(this.addRect.getPosition(), this);
+		var point = this.addRect.getPosition();
 		var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
 		this.collisionLayer.addChild(bottleWeapon.base, 100);
 		this.collisionLayer.addChild(bottleWeapon.firstb, 100);
@@ -725,6 +726,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
 							PlayerData.gold += Math.floor(this.monsterArr[j].gold);//消灭怪物获得金币
 							this.showGoldNumber();
+							if( this.pointTemp == this.monsterArr[i].monster )
+							{
+								getPointAnimate(cc.p(5000, 5000), this.monsterArr[i].monster, this);
+								this.pointTemp = null;
+							}
 							this.monsterArr[j].monster.removeFromParent();
 							this.monsterArr.splice(j, 1);
 						}
@@ -803,6 +809,14 @@ var LuoboLevel01 = ccui.Layout.extend(
 			this.pageNumTxt.setString(0);
 		}
 		this.pageNumTxt.setString(PlayerData.gold);
+		this.jugementWenponUpgradeAn();
+	},
+	jugementWenponUpgradeAn:function()
+	{
+		for ( var i = 0; i < this.weaponArr.length; i++ )
+		{
+			this.weaponArr[i].jugementUpgrade();
+		}
 	}
 });
 
