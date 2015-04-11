@@ -72,69 +72,22 @@ var LuoboLevel01 = ccui.Layout.extend(
 		var sequence = cc.sequence(animate, callFunc);
 		startSprite.runAction(sequence);
 	},
-	// instance monster
-	getMonster:function(texture01, texture02)
-	{
-		var animation3 = [];
-		var spriteFrame1 = cc.spriteFrameCache.getSpriteFrame(texture01);
-		var spriteFrame2 = cc.spriteFrameCache.getSpriteFrame(texture02);
-		animation3.push(spriteFrame1);
-		animation3.push(spriteFrame2);
-		var animation = cc.Animation.create(animation3,0.3);
-		var animate = cc.Animate.create(animation);
-		
-		var monster = cc.Sprite.createWithSpriteFrameName(texture01);
-		monster.setPosition(this.roadArr[0].x,this.roadArr[0].y);
-		monster.runAction(cc.RepeatForever.create(animate));
-		this.addChild(monster, 20);
-		
-		var bloodBar = ccui.Slider.create();
-		bloodBar.loadProgressBarTexture("MonsterHP01.png", ccui.Widget.PLIST_TEXTURE);
-		bloodBar.loadBarTexture("MonsterHP02.png", ccui.Widget.PLIST_TEXTURE);
-		bloodBar.setPercent(100);
-		bloodBar.setPosition(monster.width/2+5, monster.height+10);
-		bloodBar.visible = false;
-		monster.addChild(bloodBar, 10);
-		
-		var monsterOb = {monster:monster, blood:bloodBar};
-		return monsterOb;
-	},
 	//monster move to stage road
-	moveMonster:function()
+	moveMonster:function(type)
 	{
+		type = type?type:0;
 		this.dispatchMonster = false;
 		this.monsterArr = [];
-		var monster = this.getMonster("fly_yellow01.png", "fly_yellow02.png");
-		this.startMove(1,monster.monster);
+		var monster = new LuoboMonster(this, type);
+		monster.startMove(1);
 		this.monsterArr.push(monster);
 		this.schedule(function()
 		{
-			var monster = this.getMonster("fly_yellow01.png", "fly_yellow02.png");
-			this.startMove(1,monster.monster);
+			var monster = new LuoboMonster(this, type);
+			monster.startMove(1);
 			this.monsterArr.push(monster);
 		}, 1, 5);
 	},
-	startMove:function(n, flay)
-	{ 
-		var n = n||0;
-		var dur = 3;
-		if(n ===3 || n === 5)
-		{
-			dur = 1;
-		}
-		var moveTo = cc.moveTo(dur, this.roadArr[n]);
-		var callFunc = cc.callFunc(function()
-		{
-			if(n > this.roadArr.length-2)
-			{
-				return;
-			}
-			n++;
-			this.startMove(n,flay);
-		}, this);
-		var sequnce = cc.sequence(moveTo, callFunc);
-		flay.runAction(sequnce);
-	},  
 	//sprite layer
 	setSpriteLayer:function()
 	{
@@ -259,9 +212,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 		if( this.monsterArr.length < 1 && !this.dispatchMonster )
 		{
 			this.dispatchMonster = true;
+			this.monsterTempCount++;
 			this.scheduleOnce(function()
 			{
-				this.moveMonster();
+				this.moveMonster(this.monsterTempCount);
 			}, 3);
 		}
 	},
@@ -512,6 +466,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.collisionLayer = cc.Layer.create();
 		this.collisionLayer.setContentSize(Default.windowSize());
 		this.addChild(this.collisionLayer, 30);
+		this.monsterTempCount = 0;
 	},
 	//level01 weapon
 	getWeaponLayout:function(point)
@@ -694,19 +649,19 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.showGoldNumber();
 		
 		
-//		var circle = cc.DrawNode.create();
-//		var center = point;
-//		var radius = getBottleData().radius;
-//		var angle = 0;
-//		var segments= 300;
-//		var drawLineToCenter = false;
-//		var lineWidth = 10;
-//		var color = cc.color(255, 0, 0, 255);
-//		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
-//		this.collisionLayer.addChild(circle, 0);
+		var circle = cc.DrawNode.create();
+		var center = point;
+		var radius = getBottleData(bottleWeapon.type).radius;
+		var angle = 0;
+		var segments= 300;
+		var drawLineToCenter = false;
+		var lineWidth = 10;
+		var color = cc.color(255, 0, 0, 255);
+		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
+		this.collisionLayer.addChild(circle, 0);
 	},
 	//handle touch the bullet base event
-	bottleWeaponfunc:function(target, state)
+	bottleWeaponfunc:function(target, state, weaponType)
 	{
 		if( state === ccui.Widget.TOUCH_ENDED )
 		{
@@ -717,15 +672,19 @@ var LuoboLevel01 = ccui.Layout.extend(
 				this.tempWeapon = null;
 				return;
 			}
-			var range = new handleShootingRange(this, PlayerData.weaponType, target.id);
+			var range = new handleShootingRange(this, weaponType, target.id);
 			this.collisionLayer.addChild(range, 50);
 			range.setPosition(target.getPosition());
 			this.rangeArr.push(range);
 			this.tempWeapon = target;
 		}
 	},
-	handleRangeArray:function()
+	handleRangeArray:function(param)
 	{
+		if ( param )
+		{
+			this.tempWeapon = null;
+		}
 		for ( var i = 0; i < this.rangeArr.length; i++ )
 		{
 			hangleRemoveRange(this, this.rangeArr[i]);
@@ -755,16 +714,17 @@ var LuoboLevel01 = ccui.Layout.extend(
 				{
 					if( !this.monsterArr[j].monster || !this.bulletArr[i] ){return;}
 					var rect2 = this.monsterArr[j].monster.getBoundingBox(),
-						pp	  = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
+					pp	  = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
 					if( cc.rectContainsPoint(rect2, pp) )
 					{
+						this.monsterArr[j].showBlood(this.bulletArr[i].attack);
 						this.bulletArr[i].removeFromParent();
 						this.bulletArr.splice(i, 1);
-						this.monsterArr[j].blood.visible = true;
-						this.monsterArr[j].blood.setPercent(this.monsterArr[j].blood.getPercent()-15);
 						if( this.monsterArr[j].blood.getPercent() <= 0 )
 						{
 							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
+							PlayerData.gold += Math.floor(this.monsterArr[j].gold);//消灭怪物获得金币
+							this.showGoldNumber();
 							this.monsterArr[j].monster.removeFromParent();
 							this.monsterArr.splice(j, 1);
 						}
@@ -772,7 +732,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 					}
 					else
 					{
-						this.monsterArr[j].blood.visible = false;
+						this.monsterArr[j].hideBlood();
 					}
 				}
 			}
@@ -794,18 +754,18 @@ var LuoboLevel01 = ccui.Layout.extend(
 			var P1 = this.monsterArr[i].monster.getPosition();
 			var P2 = weapon.firstb.getPosition();
 			var distance = cc.pDistance(P1,P2);
-			if(distance <= getBottleData().radius)
+			if(distance <= getBottleData(weapon.type).radius)
 			{
 				// fight the first monster
 				break;
 			}
 		}
-		if(distance <= getBottleData().radius)
+		if(distance <= getBottleData(weapon.type).radius)
 		{
 			var angle = Math.atan2(P1.x - P2.x, P1.y - P2.y);
 			angle = angle*180/Math.PI;
-			weapon.getBottleAnimation(PlayerData.weaponType, angle);
-			this.shooting(weapon.firstb, angle);
+			weapon.getBottleAnimation(weapon.type, angle);
+			this.shooting(weapon, angle, weapon.type);
 		}
 		else
 		{
@@ -816,11 +776,12 @@ var LuoboLevel01 = ccui.Layout.extend(
 	 * start fire
 	 * @param weapon:sprite the weapon
 	 * @param angle:number the weapon rotate
+	 * @param weaponType:number the weapon level
 	 */
-	shooting:function(weapon, angle)
+	shooting:function(weapon, angle, weaponType)
 	{
 		this.isShooting = false;
-		var bullet =new LuoboBottleBullet(weapon.getPosition(), PlayerData.weaponType, angle, this);
+		var bullet = weapon.createBullet(weaponType, angle, this);
 		this.collisionLayer.addChild(bullet.buttle, 10);
 		this.bulletArr.push(bullet.buttle);
 	},

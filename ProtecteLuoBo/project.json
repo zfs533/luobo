@@ -21,6 +21,7 @@
         "src/zfs/module/themes/LuoboAnimation.js",
         "src/zfs/module/themes/LuoBoThemesScene.js",
         "src/zfs/module/themes/LuoBoWeaponCreate.js",
+        "src/zfs/module/themes/themes01/LuoboMonster.js",
         "src/zfs/module/themes/themes01/LuoboBottleBullet.js",
         "src/zfs/module/themes/themes01/LuoboBottleWeapon.js",
         "src/zfs/module/themes/themes01/LuoboConfig.js",
