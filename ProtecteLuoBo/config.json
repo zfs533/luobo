@@ -2,7 +2,7 @@
     "init_cfg":{
         "isLandscape":true,
         "name":"ProtecteLuoBo",
-        "width":925,
+        "width":750,
         "height":500,
         "entry":"main.js",
         "forwardConsolePort":10088,

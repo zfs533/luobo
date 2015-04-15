@@ -11,6 +11,10 @@ var LuoboMonster = cc.Sprite.extend(
 		this.zinit();
 		this.handleMonster();
 	},
+	updatePosition:function()
+	{
+		cc.log("88888888")
+	},
 	zinit:function()
 	{
 		this.monster = null;

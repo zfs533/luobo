@@ -445,7 +445,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * sprite.initWithSpriteFrameName("grossini_dance_01.png");
      */
     initWithSpriteFrameName:function (spriteFrameName) {
-        cc.assert(spriteFrameName, cc._LogInfos.Sprite_initWithSpriteFrameName);
+    	cc.assert(spriteFrameName, cc._LogInfos.Sprite_initWithSpriteFrameName);
         var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
         cc.assert(frame, spriteFrameName + cc._LogInfos.Sprite_initWithSpriteFrameName1);
         return this.initWithSpriteFrame(frame);
@@ -486,7 +486,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             for(i=1; i<len; i++){
                 tmp = _children[i];
                 j = i - 1;
-
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while(j >= 0){
                     if(tmp._localZOrder < _children[j]._localZOrder){

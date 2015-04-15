@@ -21,7 +21,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.tempWeapon = null;
 		this.handleShooting();//handle shooting
 		this.showGoldNumber();
-//		var img = ccui.ImageView.create("upgrade_0_CN.png", ccui.Widget.PLIST_TEXTURE);
+//		var img = ccui.ImageView.create("menu01.png", ccui.Widget.PLIST_TEXTURE);
 //		img.x = img.y  = 300;
 //		this.addChild(img, 100);
 	},
@@ -460,6 +460,12 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.pauseBtn.addTouchEventListener(this.pauseBtnTouchEvent, this);
 		this.addChild(this.pauseBtn, 0);
 		
+		//control continue or change level game
+		this.menuBtn = BaseButton.createe("menu01.png", "menu02.png", "", ccui.Widget.PLIST_TEXTURE);
+		this.menuBtn.setPosition(this.pauseBtn.x + 100, this.pauseBtn.y);
+		this.menuBtn.addTouchEventListener(this.menuBtnTouchEvent, this);
+		this.addChild(this.menuBtn, 0);
+		
 		//luobo current state or injured
 		this.luoboState = 10;
 		//weapon/bullet/monster/tool all collision layer
@@ -578,14 +584,31 @@ var LuoboLevel01 = ccui.Layout.extend(
 
 		return point;
 	},
+	
+	//control coutinue or change level of game
+	menuBtnTouchEvent:function(target, state)
+	{
+		if(state == ccui.Widget.TOUCH_ENDED)
+		{
+			this.handleRangeArray();
+			var me = new LuoboMenu();
+			this.addChild(me, 100);
+		}
+	},
 	//control pause or play
 	pauseBtnTouchEvent:function(target, state)
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			var that = this;
 			this.handleRangeArray();
 			if(this.isPause)
 			{
+				this.scheduleUpdate();
+				for ( var i = 0; i < this.monsterArr.length; i++ )
+				{
+//					this.monsterArr[i].monster.resumeAllActions();
+				}
 				this.isPause = false;
 				target.loadTextures("pause01.png","pause01.png","",ccui.Widget.PLIST_TEXTURE);
 				this.menuCenter.setOpacity(250);
@@ -593,6 +616,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 			}
 			else
 			{
+				this.unscheduleUpdate();
+				for ( var i = 0; i < this.monsterArr.length; i++ )
+				{
+//					this.monsterArr[i].monster.stopAllActions();
+				}
 				this.menuCenter.setOpacity(0);
 				this.menuCenterBg.setOpacity(250);
 				this.isPause = true;
