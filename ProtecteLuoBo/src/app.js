@@ -15,12 +15,12 @@ var HelloWorldLayer = cc.Layer.extend(
     	this.setContentSize(Default.windowSize());
     	var layerColor = cc.LayerColor.create(cc.color.RED);
     	this.addChild(layerColor, 0);
-//    	this.gotoLuoBoMainScene();
+    	this.gotoLuoBoMainScene();
 //    	this.gotoLuoBoHelpScene();
 //    	this.gotoLuoBoSettingScene();
 //    	this.gotoLuoBoThemesScene();
 //    	this.gotoLuoBoThemesScene01();
-    	this.gotoLuoBoThemesScene01level01();
+//    	this.gotoLuoBoThemesScene01level01();
     },
     //luobo themes scene level01 api
     gotoLuoBoThemesScene01level01:function()

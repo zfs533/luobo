@@ -49,6 +49,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 		this.startBtn = BaseButton.createe("ss_play_normal_CN.png", "ss_play_pressed_CN.png", "", ccui.Widget.PLIST_TEXTURE);
 		this.startBtn.setPosition(this.width/2, 60);
 		this.addChild(this.startBtn, 20);
+		this.startBtn.addTouchEventListener(this.startBtnEvent, this);
 		
 		this.lockedTxt = ccui.ImageView.create("ss_locked_CN.png", ccui.Widget.PLIST_TEXTURE);
 		this.lockedTxt.setPosition(this.startBtn.x, this.startBtn.y);
@@ -60,18 +61,18 @@ var LuoboThemesScene01 = ccui.Layout.extend
 	handleMapLevel:function()
 	{
 		this.maps = [
-		             {map:"ss_map01.png", locked:false, tower:"ss_towers_01.png", level:1, wave:"ss_waves_15.png"},
-		             {map:"ss_map02.png", locked:true, tower:"ss_towers_02.png", level:2, wave:"ss_waves_15.png"},
-		             {map:"ss_map03.png", locked:true, tower:"ss_towers_03.png", level:3, wave:"ss_waves_20.png"},
-		             {map:"ss_map04.png", locked:true, tower:"ss_towers_04.png", level:4, wave:"ss_waves_20.png"},
-		             {map:"ss_map05.png", locked:true, tower:"ss_towers_05.png", level:5, wave:"ss_waves_20.png"},
-		             {map:"ss_map06.png", locked:true, tower:"ss_towers_06.png", level:6, wave:"ss_waves_25.png"},
-		             {map:"ss_map07.png", locked:true, tower:"ss_towers_07.png", level:7, wave:"ss_waves_20.png"},
-		             {map:"ss_map08.png", locked:true, tower:"ss_towers_08.png", level:8, wave:"ss_waves_25.png"},
-		             {map:"ss_map09.png", locked:true, tower:"ss_towers_09.png", level:9, wave:"ss_waves_20.png"},
-		             {map:"ss_map10.png", locked:true, tower:"ss_towers_10.png", level:10, wave:"ss_waves_25.png"},
-		             {map:"ss_map11.png", locked:true, tower:"ss_towers_11.png", level:11, wave:"ss_waves_25.png"},
-		             {map:"ss_map12.png", locked:true, tower:"ss_towers_12.png", level:12, wave:"ss_waves_25.png"}
+		             {map:"ss_map01.png", locked:false, tower:"ss_towers_01.png", level:1, wave:"ss_waves_15.png", num:15},
+		             {map:"ss_map02.png", locked:true, tower:"ss_towers_02.png", level:2, wave:"ss_waves_15.png", num:15},
+		             {map:"ss_map03.png", locked:true, tower:"ss_towers_03.png", level:3, wave:"ss_waves_20.png", num:20},
+		             {map:"ss_map04.png", locked:true, tower:"ss_towers_04.png", level:4, wave:"ss_waves_20.png", num:20},
+		             {map:"ss_map05.png", locked:true, tower:"ss_towers_05.png", level:5, wave:"ss_waves_20.png", num:20},
+		             {map:"ss_map06.png", locked:true, tower:"ss_towers_06.png", level:6, wave:"ss_waves_25.png", num:25},
+		             {map:"ss_map07.png", locked:true, tower:"ss_towers_07.png", level:7, wave:"ss_waves_20.png", num:20},
+		             {map:"ss_map08.png", locked:true, tower:"ss_towers_08.png", level:8, wave:"ss_waves_25.png", num:25},
+		             {map:"ss_map09.png", locked:true, tower:"ss_towers_09.png", level:9, wave:"ss_waves_20.png", num:20},
+		             {map:"ss_map10.png", locked:true, tower:"ss_towers_10.png", level:10, wave:"ss_waves_25.png", num:25},
+		             {map:"ss_map11.png", locked:true, tower:"ss_towers_11.png", level:11, wave:"ss_waves_25.png", num:25},
+		             {map:"ss_map12.png", locked:true, tower:"ss_towers_12.png", level:12, wave:"ss_waves_25.png", num:25}
 		             ];
 		
 		this.page = ccui.PageView.create();
@@ -94,6 +95,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 		layout.setSize(cc.size(this.width , 440));
 		var map = ccui.ImageView.create(maps.map,ccui.Widget.PLIST_TEXTURE);
 		layout.isLocked = maps.locked;
+		layout.monsterNum = maps.num;
 		layout.wave = maps.wave;
 		layout.level = maps.level;
 		map.setPosition(layout.width/2, layout.height/2);
@@ -129,8 +131,8 @@ var LuoboThemesScene01 = ccui.Layout.extend
 				break;
 				
 			case ccui.Widget.TOUCH_ENDED:
-				var lock = this.page.getPage((this.page.getCurPageIndex())).isLocked;
-				if(lock)
+				var lock = this.page.getPage((this.page.getCurPageIndex()));
+				if(lock.isLocked)
 				{
 					var theme01 = new LuoBoLockLayout("themes01");
 					theme01.setPosition(this.width-theme01.width>>1,this.height-theme01.height>>1);
@@ -138,7 +140,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 				}
 				else
 				{
-					var level01 = LuoboLevel01.createScene();
+					var level01 = LuoboLevel01.createScene(lock);
 					cc.director.runScene(cc.TransitionProgressInOut.create(changeSceneTime, level01));
 				}
 				break;
@@ -148,6 +150,16 @@ var LuoboThemesScene01 = ccui.Layout.extend
 				
 			default:
 				break;
+		}
+	},
+	//start select level
+	startBtnEvent:function(target, state)
+	{
+		if ( state === ccui.Widget.TOUCH_ENDED )
+		{
+			var lock = this.page.getPage((this.page.getCurPageIndex()));
+			var level01 = LuoboLevel01.createScene(lock);
+			cc.director.runScene(cc.TransitionProgressInOut.create(changeSceneTime, level01));
 		}
 	},
 	//jugement current level is or not locked

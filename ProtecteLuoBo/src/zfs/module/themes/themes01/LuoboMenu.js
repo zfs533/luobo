@@ -5,8 +5,8 @@ var LuoboMenu = ccui.Layout.extend(
 		this._super();
 		this.zinit();
 		this.addUI();
-		this.controlLanguage();
 		this.setInformation();
+		this.bottomUI();
 	},
 	//初始化
 	zinit:function()
@@ -43,9 +43,12 @@ var LuoboMenu = ccui.Layout.extend(
 		selectBtn.setPosition(menuBg.width/2, selectBtn.height + 5);
 		selectBtn.addTouchEventListener(this.selectBtnEvent, this);
 		menuBg.addChild(selectBtn);
-		
-		
-		
+	},
+	//add bottom ui
+	bottomUI:function()
+	{
+		var btm = new LuoboBottomWeibo();
+		this.addChild(btm, 10);
 	},
 	//continue game
 	resumeBtnEvent:function(target, state)
@@ -70,10 +73,6 @@ var LuoboMenu = ccui.Layout.extend(
 			var scene = LuoboThemesScene01.createScene();
 			cc.director.runScene(cc.TransitionFade.create(changeSceneTime, scene));
 		}
-	},
-	//标签字符串显示控制
-	controlLanguage:function()
-	{
 	},
 	//设置信息
 	setInformation:function()

@@ -3,9 +3,17 @@
  */
 var LuoboLevel01 = ccui.Layout.extend(
 {
-	ctor:function()
+	/**
+	 * @param data
+	 * {"isLocked":false,"monsterNum":15,"wave":"ss_waves_15.png","level":1}
+	 */
+	ctor:function(data)
 	{
 		this._super();
+		this.data = data;
+		print(data);
+		this.monsterWave = data.monsterNum;
+		this.currentMonsterCount = 0;
 		this.zinit();
 		this.handleTMXtileMap();
 		this.setToolLayer();
@@ -75,6 +83,23 @@ var LuoboLevel01 = ccui.Layout.extend(
 	//monster move to stage road
 	moveMonster:function(type)
 	{
+		this.currentMonsterCount++;
+		if ( this.currentMonsterCount > this.monsterWave )
+		{
+			this.overGame();
+			return;
+		}
+		if ( this.currentMonsterCount > 9 && this.currentMonsterCount < 20 )
+		{
+			this.currentMonsterWave1.setString(1);
+			this.currentMonsterWave2.setString(this.currentMonsterCount - 10);
+		}
+		else
+		{
+			this.currentMonsterWave1.setString(0);
+			this.currentMonsterWave2.setString(this.currentMonsterCount);
+		}
+		
 		type = type?type:0;
 		this.dispatchMonster = false;
 		this.monsterArr = [];
@@ -438,7 +463,25 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.menuCenter = cc.Sprite.createWithSpriteFrameName("MenuCenter_01_CN.png");
 		this.menuCenter.setPosition(this.width/2, this.height-this.menuCenter.height/2);
 		this.addChild(this.menuCenter, 0);
-//		this.menuCenter.setOpacity(0);
+		
+		//怪物波数
+		var monsterWaveAll = ccui.TextAtlas.create(PlayerData.gold, "res/Themes/Items/labelatlas.png", 17, 22, "0");
+		monsterWaveAll.setAnchorPoint(0, 0);
+		monsterWaveAll.setString(this.monsterWave);//TODO
+		monsterWaveAll.setPosition(this.menuCenter.x - 10, this.menuCenter.y - 5);
+		this.addChild(monsterWaveAll, 1);
+		
+		this.currentMonsterWave1 = ccui.TextAtlas.create(PlayerData.gold, "res/Themes/Items/labelatlas.png", 17, 22, "0");
+		this.currentMonsterWave1.setAnchorPoint(0.5, 0);
+		this.currentMonsterWave1.setString(0);
+		this.currentMonsterWave1.setPosition(this.menuCenter.x - 100, monsterWaveAll.y);
+		this.addChild(this.currentMonsterWave1, 1);
+		
+		this.currentMonsterWave2 = ccui.TextAtlas.create(PlayerData.gold, "res/Themes/Items/labelatlas.png", 17, 22, "0");
+		this.currentMonsterWave2.setAnchorPoint(0.5, 0);
+		this.currentMonsterWave2.setString(0);
+		this.currentMonsterWave2.setPosition(this.menuCenter.x - 60, monsterWaveAll.y);
+		this.addChild(this.currentMonsterWave2, 1);
 		
 		//pause background
 		this.menuCenterBg = cc.Sprite.createWithSpriteFrameName("MenuCenter_02_CN.png");
@@ -845,12 +888,20 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			this.weaponArr[i].jugementUpgrade();
 		}
+	},
+	//pass level
+	overGame:function()
+	{
+		//data {wave:15, passWave:15, isWin:true, level:1}
+		var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:true,level:1};
+		var mm = new LuoboOverLevel(data);
+		this.addChild(mm, 100);
 	}
 });
 
-LuoboLevel01.createScene = function()
+LuoboLevel01.createScene = function(data)
 {
-	var theLayer = new LuoboLevel01();
+	var theLayer = new LuoboLevel01(data);
 	var scene = cc.Scene.create();
 	scene.addChild(theLayer);
 	return scene
