@@ -1,8 +1,13 @@
 var LuoboMenu = ccui.Layout.extend(
 {
-	ctor:function()
+	/**
+	 * @param data
+	 * {"isLocked":false,"monsterNum":15,"wave":"ss_waves_15.png","level":1}
+	 */
+	ctor:function(data)
 	{
 		this._super();
+		this.data = data;
 		this.zinit();
 		this.addUI();
 		this.setInformation();
@@ -63,6 +68,8 @@ var LuoboMenu = ccui.Layout.extend(
 	{
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
+			var scene = LuoboLevel01.createScene(this.data);
+			cc.director.runScene(cc.TransitionFade.create(changeSceneTime, scene));
 		}
 	},
 	//select level of game

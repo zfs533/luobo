@@ -8,10 +8,11 @@ var LuoboOverLevel = ccui.Layout.extend(
 	 * @param data
 	 * {wave:15, passWave:15, isWin:true, level:1}
 	 */
-	ctor:function(data)
+	ctor:function(data, that)
 	{
 		this._super();
 		this.data = data;
+		this.that = that;
 		this.zinit();
 		this.addUI();
 		this.setInformation();
@@ -168,6 +169,8 @@ var LuoboOverLevel = ccui.Layout.extend(
 	{
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
+			var scene = LuoboLevel01.createScene(this.that.data);
+			cc.director.runScene(cc.TransitionFade.create(changeSceneTime, scene));
 		}
 	},
 	//设置信息

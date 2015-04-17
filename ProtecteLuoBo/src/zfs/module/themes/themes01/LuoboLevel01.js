@@ -11,27 +11,35 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		this._super();
 		this.data = data;
-		print(data);
-		this.monsterWave = data.monsterNum;
-		this.currentMonsterCount = 0;
+		this.initVariable();
 		this.zinit();
 		this.handleTMXtileMap();
 		this.setToolLayer();
 		this.setSpriteLayer();
 		this.findLuoboRoad();
-//		this.playStartEffect();//the monster start move effect
 		this.scheduleUpdate();
-		this.moveMonster();
+		this.handleShooting();
+		this.showGoldNumber();
 		this.addTouchEventListener(this.touchLayerFunc, this);
+		var img = ccui.ImageView.create("BossHP02.png", ccui.Widget.PLIST_TEXTURE);
+		img.x = img.y  = 300;
+		this.addChild(img, 100);
+	},
+	initVariable:function()
+	{
+		this.monsterWave = this.data.monsterNum;
+		this.currentMonsterCount = 0;
+		this.dispatchMonster = false;
 		this.bulletArr = [];
 		this.weaponArr = [];
 		this.rangeArr  = [];
+		this.monsterArr = [];
 		this.tempWeapon = null;
-		this.handleShooting();//handle shooting
-		this.showGoldNumber();
-//		var img = ccui.ImageView.create("menu01.png", ccui.Widget.PLIST_TEXTURE);
-//		img.x = img.y  = 300;
-//		this.addChild(img, 100);
+		this.gameIsOver = false;
+		this.schedule(function()
+		{
+			this.luoboPro.playShakeAnimate();
+		}, 10);
 	},
 	//tmxtiled map
 	handleTMXtileMap:function()
@@ -58,31 +66,13 @@ var LuoboLevel01 = ccui.Layout.extend(
 		}
 		this.roadArr = roadArr;
 	},
-	//the monster start move effect
-	playStartEffect:function()
-	{
-		var animation = [];
-		var spriteFrame1 = cc.spriteFrameCache.getSpriteFrame("mcm01.png");
-		var spriteFrame2 = cc.spriteFrameCache.getSpriteFrame("mcm02.png");
-		animation.push(spriteFrame1);
-		animation.push(spriteFrame2);
-		var animation = cc.Animation.create(animation, 0.5);
-		var animate = cc.Animate.create(animation);
-
-		var startSprite = cc.Sprite.createWithSpriteFrameName("mcm01.png");
-		startSprite.setPosition(this.roadArr[0].x,this.roadArr[0].y);
-		this.addChild(startSprite, 10);
-		
-		var callFunc = cc.callFunc(function()
-		{
-			startSprite.removeFromParent();
-		}, this);
-		var sequence = cc.sequence(animate, callFunc);
-		startSprite.runAction(sequence);
-	},
 	//monster move to stage road
-	moveMonster:function(type)
+	moveMonster:function()
 	{
+		if ( this.gameIsOver )
+		{
+			return;
+		}
 		this.currentMonsterCount++;
 		if ( this.currentMonsterCount > this.monsterWave )
 		{
@@ -100,18 +90,18 @@ var LuoboLevel01 = ccui.Layout.extend(
 			this.currentMonsterWave2.setString(this.currentMonsterCount);
 		}
 		
-		type = type?type:0;
-		this.dispatchMonster = false;
-		this.monsterArr = [];
-		var monster = new LuoboMonster(this, type);
+		var monster = new LuoboMonster(this);
+		monster.playEnterAnimation();
 		monster.startMove(1);
 		this.monsterArr.push(monster);
+		this.dispatchMonster = false;
 		this.schedule(function()
 		{
-			var monster = new LuoboMonster(this, type);
+			var monster = new LuoboMonster(this);
+			monster.playEnterAnimation();
 			monster.startMove(1);
 			this.monsterArr.push(monster);
-		}, 1, 5);
+		}, 1, 9);
 	},
 	//sprite layer
 	setSpriteLayer:function()
@@ -127,106 +117,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 		spriteLayer.addChild(cloud01, 0);
 		
 		var obj1 = this.tmxObjectGroups.getObject("Obj13");
-//		this.luobo = cc.Sprite.createWithSpriteFrameName("hlb21.png");
-		this.luobo = cc.Sprite.createWithSpriteFrameName("hlb"+2+".png");
-		this.luobo.runAction(cc.RepeatForever.create(this.getLuoboAnimation(3)));
+		this.luoboPro = new LuoboProtected(this);
+		this.luobo = this.luoboPro.luobo;
 		this.luobo.setPosition(obj1.x+50, obj1.y);
-		spriteLayer.addChild(this.luobo, 0);
-	},
-	/**
-	 * set luobo animation
-	 * @param:type:Number animation type
-	 * @param:index:Number
-	 */
-	getLuoboAnimation:function(type, index)
-	{
-		//animation 01  shake
-		{
-			var animation1 = [];
-			for(var i = 10; i < 19; i++)
-			{
-				var spriteFrame = cc.spriteFrameCache.getSpriteFrame("hlb"+i+".png");
-				animation1.push(spriteFrame);
-			}
-			var animation = cc.Animation.create(animation1,0.1);
-			var animate = cc.Animate.create(animation);
-			var callFunc = cc.callFunc(function()
-			{
-				this.luobo.runAction(cc.RepeatForever.create(this.getLuoboAnimation(3)));
-			}, this);
-			var sequnce = cc.sequence(animate, callFunc);
-		}
-		if(type === 1)
-		{
-			return sequnce;
-		}
-		//animation 03 normal
-		{
-			var animation3 = [];
-			var spriteFrame1 = cc.spriteFrameCache.getSpriteFrame("hlb23.png");
-			var spriteFrame2 = cc.spriteFrameCache.getSpriteFrame("hlb22.png");
-			var spriteFrame3 = cc.spriteFrameCache.getSpriteFrame("hlb21.png");
-			animation3.push(spriteFrame1);
-			animation3.push(spriteFrame2);
-			animation3.push(spriteFrame3);
-			var animation = cc.Animation.create(animation3,0.1);
-			var animate = cc.Animate.create(animation);
-			var delayTime = cc.DelayTime.create(2);
-			var sequnce = cc.sequence(animate, delayTime);
-		}
-		if(type === 3)
-		{
-			return sequnce;
-		}
-	},
-	//the luobo is injured state by monster
-	getInjuredAnimate:function(state)
-	{
-		function getAnimate(currentState)
-		{
-			var animation = [];
-			var spriteFrame = cc.spriteFrameCache.getSpriteFrame("hlb"+currentState+".png");
-			animation.push(spriteFrame);
-			var animation = cc.Animation.create(animation,0.1);
-			var animate = cc.Animate.create(animation);
-			return animate;
-		};
-		switch (state) 
-		{
-			case 9:
-				return getAnimate(state);
-				break;
-	
-			case 8:
-				return getAnimate(state);
-				break;
-				
-			case 6:
-				return getAnimate(state);
-				break;
-				
-			case 4:
-				return getAnimate(state);
-				break;
-				
-			case 3:
-				return getAnimate(state);
-				break;
-				
-			case 2:
-				return getAnimate(state);
-				break;
-				
-			case 1:
-				return getAnimate(state);
-				break;
-				
-			case 0://game is over
-				break;
-
-			default:
-				break;
-		}
+		spriteLayer.addChild(this.luobo, 0);//TODO
 	},
 	//check every frame
 	update:function()
@@ -236,11 +130,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.checkBulletCollision();
 		if( this.monsterArr.length < 1 && !this.dispatchMonster )
 		{
+			cc.log("********************  "+this.monsterArr.length+"  "+this.dispatchMonster)
 			this.dispatchMonster = true;
-			this.monsterTempCount++;
 			this.scheduleOnce(function()
 			{
-				this.moveMonster(this.monsterTempCount);
+				this.moveMonster();
 			}, 3);
 		}
 	},
@@ -263,26 +157,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 					}
 					this.monsterArr[i].monster.removeFromParent();
 					this.monsterArr.splice(i, 1);
-					this.setLuoboInjured();
+					this.luoboPro.playInjuredAnimate();
 				}
 			}
 		}
-	},
-	//check collision luobo is injured and handle the indjured state
-	setLuoboInjured:function()
-	{
-		this.luoboState--;
-		if(this.luoboState === 7 || this.luoboState === 5)
-		{
-			this.luoboState--;
-		}
-		else if(this.luoboState === 0)//game is over
-		{
-			this.getInjuredAnimate(this.luoboState);
-			return;
-		}
-		this.luobo.stopAllActions();
-		this.luobo.runAction(this.getInjuredAnimate(this.luoboState));
 	},
 	//goods layer
 	setToolLayer:function()
@@ -390,7 +268,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 					this.hideWeaponLayout();
 					hideAddWeaponAnimate(this);
 					this.luobo.stopAllActions();
-					this.luobo.runAction(this.getLuoboAnimation(1));
+					this.luoboPro.playShakeAnimate();
 					return;
 				}
 			}
@@ -469,6 +347,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		monsterWaveAll.setAnchorPoint(0, 0);
 		monsterWaveAll.setString(this.monsterWave);//TODO
 		monsterWaveAll.setPosition(this.menuCenter.x - 10, this.menuCenter.y - 5);
+		this.monsterWaveAll = monsterWaveAll;
 		this.addChild(monsterWaveAll, 1);
 		
 		this.currentMonsterWave1 = ccui.TextAtlas.create(PlayerData.gold, "res/Themes/Items/labelatlas.png", 17, 22, "0");
@@ -509,13 +388,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.menuBtn.addTouchEventListener(this.menuBtnTouchEvent, this);
 		this.addChild(this.menuBtn, 0);
 		
-		//luobo current state or injured
-		this.luoboState = 10;
 		//weapon/bullet/monster/tool all collision layer
 		this.collisionLayer = cc.Layer.create();
 		this.collisionLayer.setContentSize(Default.windowSize());
 		this.addChild(this.collisionLayer, 30);
-		this.monsterTempCount = 0;
 	},
 	//level01 weapon
 	getWeaponLayout:function(point)
@@ -634,7 +510,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
 			this.handleRangeArray();
-			var me = new LuoboMenu();
+			var me = new LuoboMenu(this.data);
 			this.addChild(me, 100);
 		}
 	},
@@ -652,6 +528,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 				{
 //					this.monsterArr[i].monster.resumeAllActions();
 				}
+				this.monsterWaveAll.visible = true;
+				this.currentMonsterWave1.visible = true;
+				this.currentMonsterWave2.visible = true;
 				this.isPause = false;
 				target.loadTextures("pause01.png","pause01.png","",ccui.Widget.PLIST_TEXTURE);
 				this.menuCenter.setOpacity(250);
@@ -664,6 +543,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 				{
 //					this.monsterArr[i].monster.stopAllActions();
 				}
+				this.monsterWaveAll.visible = false;
+				this.currentMonsterWave1.visible = false;
+				this.currentMonsterWave2.visible = false;
 				this.menuCenter.setOpacity(0);
 				this.menuCenterBg.setOpacity(250);
 				this.isPause = true;
@@ -721,16 +603,16 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.showGoldNumber();
 		
 		
-		var circle = cc.DrawNode.create();
-		var center = point;
-		var radius = getBottleData(bottleWeapon.type).radius;
-		var angle = 0;
-		var segments= 300;
-		var drawLineToCenter = false;
-		var lineWidth = 10;
-		var color = cc.color(255, 0, 0, 255);
-		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
-		this.collisionLayer.addChild(circle, 0);
+//		var circle = cc.DrawNode.create();
+//		var center = point;
+//		var radius = getBottleData(bottleWeapon.type).radius;
+//		var angle = 0;
+//		var segments= 300;
+//		var drawLineToCenter = false;
+//		var lineWidth = 10;
+//		var color = cc.color(255, 0, 0, 255);
+//		circle.drawCircle(center, radius, angle, segments, drawLineToCenter, lineWidth, color);
+//		this.collisionLayer.addChild(circle, 0);
 	},
 	//handle touch the bullet base event
 	bottleWeaponfunc:function(target, state, weaponType)
@@ -797,7 +679,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
 							PlayerData.gold += Math.floor(this.monsterArr[j].gold);//消灭怪物获得金币
 							this.showGoldNumber();
-							if( this.pointTemp == this.monsterArr[i].monster )
+							if( this.monsterArr[i].monster && this.pointTemp == this.monsterArr[i].monster )
 							{
 								getPointAnimate(cc.p(5000, 5000), this.monsterArr[i].monster, this);
 								this.pointTemp = null;
@@ -893,9 +775,26 @@ var LuoboLevel01 = ccui.Layout.extend(
 	overGame:function()
 	{
 		//data {wave:15, passWave:15, isWin:true, level:1}
-		var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:true,level:1};
-		var mm = new LuoboOverLevel(data);
+		if ( this.currentMonsterCount < this.monsterWave )
+		{
+			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:false,level:this.data.level};
+		}
+		else
+		{
+			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:true,level:this.data.level};
+		}
+		var mm = new LuoboOverLevel(data, this);
 		this.addChild(mm, 100);
+		this.gameIsOver = true; 
+		this.unscheduleUpdate();
+		this.removeAllMonster();
+	},
+	removeAllMonster:function()
+	{
+		for ( var i = 0; i < this.monsterArr.length; i++ )
+		{
+			this.monsterArr[i].monster.removeFromParent();
+		}
 	}
 });
 

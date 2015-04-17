@@ -3,11 +3,10 @@
  */
 var LuoboMonster = cc.Sprite.extend(
 {
-	ctor:function(that,type)
+	ctor:function(that)
 	{
 		this._super();
 		this.that = that
-		this.type = type;
 		this.zinit();
 		this.handleMonster();
 	},
@@ -25,12 +24,14 @@ var LuoboMonster = cc.Sprite.extend(
 	//create monster according to the type
 	handleMonster:function()
 	{
-		if ( this.type > this.textureArr.length - 1 )
+		var type = Math.floor(Math.random()*this.textureArr.length);
+		if ( this.textureArr[type].type > 1)
 		{
-			this.type = this.textureArr.length - 1;
+			this.handleMonster();
+			return;
 		}
-		var monster = this.getMonster(this.textureArr[this.type].texture1, this.textureArr[this.type].texture2);
-		this.gold = this.textureArr[this.type].value;
+		var monster = this.getMonster(this.textureArr[type].texture1, this.textureArr[type].texture2);
+		this.gold = this.textureArr[type].value;
 		this.monster = monster.monster;
 		this.blood = monster.blood;
 	},
@@ -94,6 +95,27 @@ var LuoboMonster = cc.Sprite.extend(
 	hideBlood:function()
 	{
 		this.blood.visible = false;
+	},
+	//play monster enter state animation
+	playEnterAnimation:function()
+	{
+		var animation = [];
+		var spriteFrame1 = cc.spriteFrameCache.getSpriteFrame("mcm01.png");
+		var spriteFrame2 = cc.spriteFrameCache.getSpriteFrame("mcm02.png");
+		animation.push(spriteFrame1);
+		animation.push(spriteFrame2);
+		var animation = cc.Animation.create(animation, 0.1);
+		var animate = cc.Animate.create(animation);
+
+		var startSprite = cc.Sprite.createWithSpriteFrameName("mcm01.png");
+		startSprite.setPosition(this.that.roadArr[0].x,this.that.roadArr[0].y);
+		this.that.addChild(startSprite, 10);
+		var callFunc = cc.callFunc(function()
+		{
+			startSprite.removeFromParent();
+		}, this);
+		var sequence = cc.sequence(animate, callFunc);
+		startSprite.runAction(sequence.repeatForever());
 	}
 });
 
