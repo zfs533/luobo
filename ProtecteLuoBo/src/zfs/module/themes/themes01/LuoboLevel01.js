@@ -17,13 +17,14 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.setToolLayer();
 		this.setSpriteLayer();
 		this.findLuoboRoad();
-		this.scheduleUpdate();
 		this.handleShooting();
 		this.showGoldNumber();
+		this.playArrowAnimate();
 		this.addTouchEventListener(this.touchLayerFunc, this);
-		var img = ccui.ImageView.create("BossHP02.png", ccui.Widget.PLIST_TEXTURE);
-		img.x = img.y  = 300;
-		this.addChild(img, 100);
+//		var img = ccui.ImageView.create("arrow.png", ccui.Widget.PLIST_TEXTURE);
+//		var img = ccui.ImageView.create("countdown_11.png", ccui.Widget.PLIST_TEXTURE);
+//		img.x = img.y  = 300;
+//		this.addChild(img, 100);
 	},
 	initVariable:function()
 	{
@@ -122,6 +123,17 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.luobo.setPosition(obj1.x+50, obj1.y);
 		spriteLayer.addChild(this.luobo, 0);//TODO
 	},
+	playArrowAnimate:function()
+	{
+		//door
+		var obj1 = this.tmxObjectGroups.getObject("Obj9");
+		var arrow = new LuoboArrow(obj1, this);
+		this.addChild(arrow, 100);
+	},
+	registerScheduel:function()
+	{
+		this.scheduleUpdate();
+	},
 	//check every frame
 	update:function()
 	{
@@ -145,6 +157,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		rect1.y += 50;
 		for(var i = 0; i < this.monsterArr.length; i++)
 		{
+			if(!this.monsterArr[i].monster){return;}
 			var rect2 = this.monsterArr[i].monster.getBoundingBox();
 			if(rect1.x < rect2.x && rect1.x+rect1.width > rect2.x)
 			{
@@ -526,7 +539,9 @@ var LuoboLevel01 = ccui.Layout.extend(
 				this.scheduleUpdate();
 				for ( var i = 0; i < this.monsterArr.length; i++ )
 				{
-//					this.monsterArr[i].monster.resumeAllActions();
+					
+//					this.monsterArr[i].monster.setPosition(this.roadArr[this.monsterArr[i].n-1]);
+//					this.monsterArr[i].startMove(this.monsterArr[i].n);
 				}
 				this.monsterWaveAll.visible = true;
 				this.currentMonsterWave1.visible = true;
@@ -541,7 +556,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				this.unscheduleUpdate();
 				for ( var i = 0; i < this.monsterArr.length; i++ )
 				{
-//					this.monsterArr[i].monster.stopAllActions();
+//					this.monsterArr[i].monster.stopAction(this.monsterArr[i].actions);
 				}
 				this.monsterWaveAll.visible = false;
 				this.currentMonsterWave1.visible = false;
@@ -679,6 +694,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
 							PlayerData.gold += Math.floor(this.monsterArr[j].gold);//消灭怪物获得金币
 							this.showGoldNumber();
+							if ( !this.monsterArr[i] ){continue;}
 							if( this.monsterArr[i].monster && this.pointTemp == this.monsterArr[i].monster )
 							{
 								getPointAnimate(cc.p(5000, 5000), this.monsterArr[i].monster, this);
@@ -789,6 +805,13 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.unscheduleUpdate();
 		this.removeAllMonster();
 	},
+	//进入结点
+	onEnter:function()
+	{
+		this._super();
+		var countDown = new LuoboCountDown();
+		this.addChild(countDown, 100);
+	},
 	removeAllMonster:function()
 	{
 		for ( var i = 0; i < this.monsterArr.length; i++ )
@@ -805,7 +828,6 @@ LuoboLevel01.createScene = function(data)
 	scene.addChild(theLayer);
 	return scene
 };
-
 
 
 
