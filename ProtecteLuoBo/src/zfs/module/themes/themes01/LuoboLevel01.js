@@ -19,7 +19,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.findLuoboRoad();
 		this.handleShooting();
 		this.showGoldNumber();
-		this.playArrowAnimate();
+//		this.playArrowAnimate();
+		this.addGuidance();
 		this.addTouchEventListener(this.touchLayerFunc, this);
 //		var img = ccui.ImageView.create("arrow.png", ccui.Widget.PLIST_TEXTURE);
 //		var img = ccui.ImageView.create("countdown_11.png", ccui.Widget.PLIST_TEXTURE);
@@ -42,11 +43,17 @@ var LuoboLevel01 = ccui.Layout.extend(
 			this.luoboPro.playShakeAnimate();
 		}, 10);
 	},
+	//new player guidance
+	addGuidance:function()
+	{
+		var guidance = new LuoboGuidance(this);
+		this.addChild(guidance, 100);
+	},
 	//tmxtiled map
 	handleTMXtileMap:function()
 	{
 		this.tmxTiled = cc.TMXTiledMap.create("res/Themes/Theme1/BG1/BGPath.tmx");
-		this.addChild(this.tmxTiled, 100);
+		this.addChild(this.tmxTiled, 1);
 		this.tmxObjectGroups = this.tmxTiled.getObjectGroups()[0];//cc.TMXObjectGroup
 		this.tmxOGArr = this.tmxObjectGroups.getObjects();//array
 		for( var mm in this.tmxObjectGroups.getObject("Obj1"))
@@ -601,15 +608,16 @@ var LuoboLevel01 = ccui.Layout.extend(
 	 * handle the luobo weapon actions;for example rotate/shoot/sell
 	 * @param;parent:LuoboLevel01 class
 	 */
-	handleLuoboWeaponBottle:function()
+	handleLuoboWeaponBottle:function()//TODO
 	{
 		if ( PlayerData.gold < 100 )
 		{
 			AlertView.show("金币不足");
 			return;
 		}
-		getAirAnimateion(this.addRect.getPosition(), this);
-		var point = this.addRect.getPosition();
+		
+		var point =this.addRect?this.addRect.getPosition():cc.p(280, 280);
+		getAirAnimateion(point, this);
 		var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
 		this.collisionLayer.addChild(bottleWeapon.base, 100);
 		this.collisionLayer.addChild(bottleWeapon.firstb, 100);

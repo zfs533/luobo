@@ -23,6 +23,7 @@
         "src/zfs/module/themes/LuoboAnimation.js",
         "src/zfs/module/themes/LuoBoThemesScene.js",
         "src/zfs/module/themes/LuoBoWeaponCreate.js",
+        "src/zfs/module/themes/themes01/LuoboGuidance.js",
         "src/zfs/module/themes/themes01/LuoboArrow.js",
         "src/zfs/module/themes/themes01/LuoboCountDown.js",
         "src/zfs/module/themes/themes01/LuoboProtected.js",

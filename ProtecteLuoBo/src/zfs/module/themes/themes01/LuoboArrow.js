@@ -1,3 +1,6 @@
+/**
+ * zfs@ the arrow animation		2015/04/21
+ */
 var LuoboArrow = ccui.Layout.extend(
 {
 	/**
