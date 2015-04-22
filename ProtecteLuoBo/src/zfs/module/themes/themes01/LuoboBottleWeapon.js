@@ -215,6 +215,8 @@ function handleShootingRange(that, type, id)
 			var sell = ccui.ImageView.create(RangeData[i].sellTexture, ccui.Widget.PLIST_TEXTURE);
 			up.x = sell.x = range.width/2;
 			up.y = up.height/2 + (up.height +range.height)/2;
+			
+			
 			sell.y = range.height/2 - sell.height;
 			range.addChild(up, 0);
 			range.addChild(sell, 0);

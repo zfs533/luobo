@@ -20,6 +20,8 @@ var LuoboMonster = cc.Sprite.extend(
 		this.bloodBar = null;
 		this.gold = 0;
 		this.textureArr = MasterData;
+		this.actions = null;
+		this.n = 0;
 	},
 	//create monster according to the type
 	handleMonster:function()
@@ -83,6 +85,8 @@ var LuoboMonster = cc.Sprite.extend(
 			this.startMove(n,flay);
 		}, this);
 		var sequnce = cc.sequence(moveTo, callFunc);
+		this.actions = sequnce;
+		this.n = n;
 		flay.runAction(sequnce);
 	},  
 	//show the blood progress
