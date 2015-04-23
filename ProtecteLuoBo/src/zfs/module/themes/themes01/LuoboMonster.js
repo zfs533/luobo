@@ -35,6 +35,7 @@ var LuoboMonster = cc.Sprite.extend(
 		var monster = this.getMonster(this.textureArr[type].texture1, this.textureArr[type].texture2);
 		this.gold = this.textureArr[type].value;
 		this.monster = monster.monster;
+		this.monster.blood = monster.blood;
 		this.blood = monster.blood;
 	},
 	//getted monster
@@ -85,9 +86,9 @@ var LuoboMonster = cc.Sprite.extend(
 			this.startMove(n,flay);
 		}, this);
 		var sequnce = cc.sequence(moveTo, callFunc);
-		this.actions = sequnce;
 		this.n = n;
 		flay.runAction(sequnce);
+		this.actions = sequnce;
 	},  
 	//show the blood progress
 	showBlood:function(sub)
@@ -119,6 +120,7 @@ var LuoboMonster = cc.Sprite.extend(
 			startSprite.removeFromParent();
 		}, this);
 		var sequence = cc.sequence(animate, callFunc);
+		startSprite.scale = 2;
 		startSprite.runAction(sequence.repeatForever());
 	}
 });

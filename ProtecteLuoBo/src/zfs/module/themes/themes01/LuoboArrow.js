@@ -1,7 +1,7 @@
 /**
  * zfs@ the arrow animation		2015/04/21
  */
-var LuoboArrow = ccui.Layout.extend(
+var LuoboArrow = cc.Layer.extend(
 {
 	/**
 	 * 
@@ -24,7 +24,7 @@ var LuoboArrow = ccui.Layout.extend(
 	//初始化
 	zinit:function()
 	{
-		this.setSize(cc.size(Default.windowWidth(),Default.windowHeight()));
+		this.setContentSize(cc.size(Default.windowWidth(),Default.windowHeight()));
 		this.count = 0;
 		this.arrowArr = [];
 		for ( var i = 0; i < 3; i++ )

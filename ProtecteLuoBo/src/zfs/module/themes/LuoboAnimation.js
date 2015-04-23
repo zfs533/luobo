@@ -52,6 +52,7 @@ function getForbideAnimation(point, that)
  */
 function getPointAnimate(point, target, that)
 {
+	that.selectedTarget = target;
 	if(that.pointAnimate)
 	{
 		that.pointAnimate.setPosition(cc.p(point.x,point.y+target.height/2));
@@ -81,6 +82,7 @@ function hidePointAnimation(that)
 {
 	if(that.pointAnimate)
 	{
+		that.selectedTarget = null;
 		that.pointTemp = null;
 		that.pointAnimate.setPosition(cc.p(5000, 5000));
 	}

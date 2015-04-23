@@ -3,9 +3,10 @@
  */
 var LuoboCountDown = ccui.Layout.extend(
 {
-	ctor:function()
+	ctor:function(that)
 	{
 		this._super();
+		this.that = that;
 		this.zinit();
 		this.addUI();
 		this.setInformation();
@@ -53,7 +54,13 @@ var LuoboCountDown = ccui.Layout.extend(
 			var scaleTo = cc.scaleTo(0.1, 0.01, 0.01);
 			var rotate  = cc.rotateTo(0.1, 180, 90);
 			var span = cc.spawn(scaleTo, rotate);
-			var callFunc = cc.callFunc(function(){this.removeFromParent();}, this);
+			var callFunc = cc.callFunc(function()
+			{
+				this.that.menuBtn.setTouchEnabled(true);
+				this.that.pauseBtn.setTouchEnabled(true);
+				this.that.speedBtn.setTouchEnabled(true);
+				this.removeFromParent();
+			}, this);
 			var sequnce = cc.sequence(span, callFunc);
 			this.countNumb.runAction(sequnce);
 			this.circle.runAction(span.clone());

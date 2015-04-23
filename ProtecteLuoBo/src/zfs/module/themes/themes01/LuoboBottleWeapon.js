@@ -250,6 +250,10 @@ function upgradeWeapon(target, state, id, that, gold)
 		that.handleRangeArray(true);
 		PlayerData.gold -= gold;
 		that.showGoldNumber();
+		if ( that.guidance )
+		{
+			that.guidance.refreshHandPosition();
+		}
 	}
 };
 
