@@ -9,16 +9,21 @@ var LuoboBottleWeapon = cc.Sprite.extend(
 		this.type = type;
 		this.point = point;
 		this.that = that;
+		this.variable();
+		this.setInformation();
+		this.handleWeaponAttack();
+		this.jugementUpgrade();
+		
+	},
+	variable:function()
+	{
 		this.attack = 0;//attack value
 		this.id = weaponIndex++;
 		this.value = 100;
 		this.upGradeValue = 0;
 		this.upAnimate = null;// the upgrade hink
 		this.isMax = false;//the hightest level
-		this.setInformation();
-		this.handleWeaponAttack();
-		this.jugementUpgrade();
-		
+		this.isShooting = false;
 	},
 	setInformation:function()
 	{

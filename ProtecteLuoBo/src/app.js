@@ -31,7 +31,7 @@ var HelloWorldLayer = cc.Layer.extend(
     //luobo themes scene api
     gotoLuoBoThemesScene01:function()
     {
-//    	var mm = new LuoboGuidance();
+//    	var mm = new LuoboTopInfo();
 //    	this.addChild(mm, 100);
     	var themes01 = LuoboThemesScene01.createScene();
     	cc.director.runScene(cc.TransitionFade.create(0.5, themes01));

@@ -66,7 +66,7 @@ var LuoboMonster = cc.Sprite.extend(
 		return monsterOb;
 	},
 	//开始移动
-	startMove:function(n, flay)
+	startMove01:function(n, flay)
 	{ 
 		flay = this.monster;
 		var n = n||0;
@@ -83,8 +83,43 @@ var LuoboMonster = cc.Sprite.extend(
 				return;
 			}
 			n++;
-			this.startMove(n,flay);
+			this.startMove01(n,flay);
 		}, this);
+		var sequnce = cc.sequence(moveTo, callFunc);
+		this.n = n;
+		flay.runAction(sequnce);
+		this.actions = sequnce;
+	},  
+	//开始移动02
+	startMove02:function(n, flay)
+	{ 
+		flay = this.monster;
+		var n = n||0;
+		var dur = 5;
+		if( n ===2 )
+		{
+			dur = 2;
+			flay.scaleX = -1;
+		}
+		if( n ===4 )
+		{
+			dur = 2;
+			flay.scaleX = 1;
+		}
+		if ( n === 6 || n === 7 )
+		{
+			dur = 1;
+		}
+		var moveTo = cc.moveTo(dur, this.that.roadArr[n]);
+		var callFunc = cc.callFunc(function()
+				{
+			if(n > this.that.roadArr.length-2)
+			{
+				return;
+			}
+			n++;
+			this.startMove02(n,flay);
+				}, this);
 		var sequnce = cc.sequence(moveTo, callFunc);
 		this.n = n;
 		flay.runAction(sequnce);

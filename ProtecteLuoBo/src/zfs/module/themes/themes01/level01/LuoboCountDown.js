@@ -59,6 +59,7 @@ var LuoboCountDown = ccui.Layout.extend(
 				this.that.menuBtn.setTouchEnabled(true);
 				this.that.pauseBtn.setTouchEnabled(true);
 				this.that.speedBtn.setTouchEnabled(true);
+				this.that.registerScheduel();
 				this.removeFromParent();
 			}, this);
 			var sequnce = cc.sequence(span, callFunc);

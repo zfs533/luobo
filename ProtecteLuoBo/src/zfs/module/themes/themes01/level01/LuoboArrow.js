@@ -16,15 +16,10 @@ var LuoboArrow = cc.Layer.extend(
 		this._super();
 		this.data = data;
 		this.that = that;
-		this.zinit();
-		this.addUI();
-		this.controlLanguage();
-		this.setInformation();
-	},
-	//初始化
-	zinit:function()
-	{
 		this.setContentSize(cc.size(Default.windowWidth(),Default.windowHeight()));
+	},
+	type01:function()
+	{
 		this.count = 0;
 		this.arrowArr = [];
 		for ( var i = 0; i < 3; i++ )
@@ -37,6 +32,28 @@ var LuoboArrow = cc.Layer.extend(
 			this.addChild(arrow);
 			this.arrowArr.push(arrow);
 		}
+		this.startAnimate();
+	},
+	type02:function()
+	{
+		this.count = 0;
+		this.arrowArr = [];
+		for ( var i = 0; i < 3; i++ )
+		{
+			var arrow = ccui.ImageView.create("arrow.png", ccui.Widget.PLIST_TEXTURE);
+			arrow.x = this.data.x + this.data.width + 30 + this.data.width/2*i;
+			arrow.y = this.data.y + this.data.height*2- 30;
+			arrow.setOpacity(0);
+			this.addChild(arrow);
+			this.arrowArr.push(arrow);
+		}
+		this.startAnimate();
+	},
+	startAnimate:function()
+	{
+		this.addUI();
+		this.controlLanguage();
+		this.setInformation();
 	},
 	//加载控件
 	addUI:function()
@@ -73,7 +90,6 @@ var LuoboArrow = cc.Layer.extend(
 	},
 	removee:function()
 	{
-		this.that.registerScheduel();
 		this.removeFromParent();
 	},
 	//标签字符串显示控制

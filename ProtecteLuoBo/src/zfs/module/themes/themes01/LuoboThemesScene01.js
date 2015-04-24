@@ -62,7 +62,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 	{
 		this.maps = [
 		             {map:"ss_map01.png", locked:false, tower:"ss_towers_01.png", level:1, wave:"ss_waves_15.png", num:15},
-		             {map:"ss_map02.png", locked:true, tower:"ss_towers_02.png", level:2, wave:"ss_waves_15.png", num:15},
+		             {map:"ss_map02.png", locked:false, tower:"ss_towers_02.png", level:2, wave:"ss_waves_15.png", num:15},
 		             {map:"ss_map03.png", locked:true, tower:"ss_towers_03.png", level:3, wave:"ss_waves_20.png", num:20},
 		             {map:"ss_map04.png", locked:true, tower:"ss_towers_04.png", level:4, wave:"ss_waves_20.png", num:20},
 		             {map:"ss_map05.png", locked:true, tower:"ss_towers_05.png", level:5, wave:"ss_waves_20.png", num:20},
@@ -126,9 +126,6 @@ var LuoboThemesScene01 = ccui.Layout.extend
 				this.waveNum.loadTexture(this.page.getPage((this.page.getCurPageIndex())).wave, ccui.Widget.PLIST_TEXTURE);
 				this.jugementLevelState(!lock);
 				break;
-	
-			case ccui.Widget.TOUCH_MOVED:
-				break;
 				
 			case ccui.Widget.TOUCH_ENDED:
 				var lock = this.page.getPage((this.page.getCurPageIndex()));
@@ -140,8 +137,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 				}
 				else
 				{
-					var level01 = LuoboLevel01.createScene(lock);
-					cc.director.runScene(cc.TransitionProgressInOut.create(changeSceneTime, level01));
+					this.gotoCurrentLevel(lock);
 				}
 				break;
 				
@@ -158,8 +154,53 @@ var LuoboThemesScene01 = ccui.Layout.extend
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
 			var lock = this.page.getPage((this.page.getCurPageIndex()));
-			var level01 = LuoboLevel01.createScene(lock);
-			cc.director.runScene(cc.TransitionProgressInOut.create(changeSceneTime, level01));
+			this.gotoCurrentLevel(lock);
+		}
+	},
+	gotoCurrentLevel:function(data)
+	{
+		switch ( data.level ) 
+		{
+		case 1:
+			Themes01LevelManager.playLevel01(data);
+			break;
+
+		case 2:
+			Themes01LevelManager.playLevel02(data);
+			break;
+			
+		case 3:
+			break;
+			
+		case 4:
+			break;
+			
+		case 5:
+			break;
+			
+		case 6:
+			break;
+			
+		case 7:
+			break;
+			
+		case 8:
+			break;
+			
+		case 9:
+			break;
+			
+		case 10:
+			break;
+			
+		case 11:
+			break;
+			
+		case 12:
+			break;
+			
+		default:
+			break;
 		}
 	},
 	//jugement current level is or not locked
