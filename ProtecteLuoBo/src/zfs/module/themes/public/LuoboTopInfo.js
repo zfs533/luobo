@@ -89,6 +89,9 @@ var LuoboTopInfo = cc.Layer.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			hidePointAnimation(this.that);
+			hideAddWeaponAnimate(this.that);
+			this.that.hideWeaponLayout();
 			if(this.isAddSpeed)
 			{
 				this.isAddSpeed = false;
@@ -107,6 +110,9 @@ var LuoboTopInfo = cc.Layer.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			hidePointAnimation(this.that);
+			hideAddWeaponAnimate(this.that);
+			this.that.hideWeaponLayout();
 			if(this.isPause)
 			{
 				this.monsterWaveAll.visible = true;
@@ -135,6 +141,9 @@ var LuoboTopInfo = cc.Layer.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			hidePointAnimation(this.that);
+			hideAddWeaponAnimate(this.that);
+			this.that.hideWeaponLayout();
 			var me = new LuoboMenu(this.data);
 			this.addChild(me, 100);
 		}

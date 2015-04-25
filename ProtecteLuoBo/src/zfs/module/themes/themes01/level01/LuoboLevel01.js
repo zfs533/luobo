@@ -213,7 +213,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		var toolLayer = cc.Layer.create();
 		toolLayer.setContentSize(Default.windowSize());
-		this.addChild(toolLayer, 10);
+		this.addChild(toolLayer, 1);
 		//small cloud
 		var obj1 = this.tmxObjectGroups.getObject("1Ob1");
 		var cloud01 = ccui.ImageView.create("cloud01.png", ccui.Widget.PLIST_TEXTURE);
@@ -323,6 +323,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 				{
 					this.hideWeaponLayout();
 					hideAddWeaponAnimate(this);
+					hidePointAnimation(this);
 					this.luobo.stopAllActions();
 					this.luoboPro.playShakeAnimate();
 					return;

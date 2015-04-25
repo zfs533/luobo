@@ -52,7 +52,7 @@ var LuoboMonster = cc.Sprite.extend(
 		var monster = cc.Sprite.createWithSpriteFrameName(texture01);
 		monster.setPosition(this.that.roadArr[0].x,this.that.roadArr[0].y);
 		monster.runAction(cc.RepeatForever.create(animate));
-		this.that.addChild(monster, 20);
+		this.that.addChild(monster, 10);
 
 		var bloodBar = ccui.Slider.create();
 		bloodBar.loadProgressBarTexture("MonsterHP01.png", ccui.Widget.PLIST_TEXTURE);
