@@ -21,6 +21,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.moveMonster();
 		this.addLuobo();
 		this.shwoCanInstallSpace();
+		this.controlShooring();
 		this.addTouchEventListener(this.touchLayerFunc, this);
 	},
 	variable:function(data)
@@ -36,6 +37,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.weaponArr = [];
 		this.monsterArr = [];
 		this.rangeArr = [];
+		this.bulletArr = [];
 		this.luoboPro = null;
 		this.luobo = null;
 		this.addRect = null;
@@ -44,6 +46,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.pointTemp = null;
 		this.pointAnimate = null;
 		this.selectedTarget = null;
+		this.isShooting = true;
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG2/BG-hd.plist");
 	},
 	initLayer:function()
@@ -331,6 +334,14 @@ var LuoboLevel02 = ccui.Layout.extend(
 			}
 		}, 3);
 	},
+	//control shooting frame rate
+	controlShooring:function()
+	{
+		this.schedule(function()
+		{
+			this.isShooting = true;
+		}, 0.5);
+	},
 	//touch eventlistener for this 
 	touchLayerFunc:function(target, state)
 	{
@@ -350,6 +361,20 @@ var LuoboLevel02 = ccui.Layout.extend(
 				hideAddWeaponAnimate(this);
 				return;
 			}
+			
+			//if touch the monster
+			for ( var i = 0; i < this.monsterArr.length; i++ )
+			{
+				var rect1 = this.monsterArr[i].monster.getBoundingBox();
+				if ( cc.rectContainsPoint(rect1, p) )
+				{
+					this.hideWeaponLayout();
+					hidePointAnimation(this);
+					this.toolLayerChildTouchFunc(this.monsterArr[i].monster, 2);
+					return;
+				}
+			}
+			
 			if ( this.addRect )
 			{
 				var recta = this.addRect.getBoundingBox();
@@ -511,6 +536,103 @@ var LuoboLevel02 = ccui.Layout.extend(
 	registerScheduel:function()
 	{
 		this.scheduleUpdate();
+	},
+	update:function()
+	{
+		this.checkMonsAndLuoCollision();
+		this.refreshPointAnimationPos();
+		this.checkShooting();
+		this.checkBulletCollision();
+	},
+	//check both the monster and the luobo collision
+	checkMonsAndLuoCollision:function()
+	{
+		var rect1 = this.luobo.getBoundingBox();
+		for ( var i = 0; i < this.monsterArr.length; i++ )
+		{
+			if ( !this.monsterArr[i].monster ){return;}
+			var rect2 = this.monsterArr[i].monster.getBoundingBox();
+			var p = this.monsterArr[i].monster.getPosition();
+			if ( cc.rectContainsPoint(rect1, p) )
+			{
+				this.monsterArr[i].monster.removeFromParent();
+				this.monsterArr.splice(i, 1);
+				this.luoboPro.playInjuredAnimate();
+			}
+		}
+	},
+	//refresh the point animation position
+	refreshPointAnimationPos:function()
+	{
+		if ( this.pointTemp )
+		{
+			getPointAnimate(this.pointTemp.getPosition(), this.pointTemp, this);
+		}
+	},
+	//check is or not to shooting
+	checkShooting:function()
+	{
+		if ( this.weaponArr && this.isShooting )
+		{
+			for ( var i = 0; i < this.weaponArr.length; i++ )
+			{
+				this.startRotateWeapon(this.weaponArr[i]);
+			}
+		}
+	},
+	//start rotate weapon.change the rotation
+	startRotateWeapon:function(weapon)
+	{
+		for ( var i = 0; i < this.monsterArr.length; i++ )
+		{
+			var p1 = this.monsterArr[i].monster.getPosition();
+			var p2 = weapon.firstb.getPosition();
+			var distance = cc.pDistance(p1, p2);
+			if ( distance <= getBottleData(weapon.type).radius )
+			{
+				break;
+			}
+		}
+		if ( distance <= getBottleData(weapon.type).radius )
+		{
+			var angle = Math.atan2(p1.x-p2.x, p1.y-p2.y);
+			angle = angle*180/Math.PI;
+			weapon.getBottleAnimation(weapon.type, angle);
+			this.shooting(weapon, angle, weapon.type);
+		}
+		else
+		{
+			weapon.firstb.stopAllActions();
+		}
+		
+	},
+	//start shoot the currenttarget monster
+	shooting:function(weapon, angle, weaponType)
+	{
+		this.isShooting = false;
+		var bullet = weapon.createBullet(weaponType, angle, this);
+		this.collisionLayer.addChild(bullet.buttle, 10);
+		this.bulletArr.push(bullet.buttle);
+	},
+	//check bullet collision that with others
+	checkBulletCollision:function()
+	{
+		if ( this.bulletArr )
+		{
+			for ( var i = 0; i < this.bulletArr.length; i++ )
+			{
+				if ( !this.bulletArr[i] ){return;}
+				var angle = this.bulletArr[i].getRotation()/180*Math.PI;
+				var speed = 5;
+				this.bulletArr[i].y += Math.cos(angle)*speed;
+				this.bulletArr[i].x += Math.sin(angle)*speed;
+				if ( this.bulletArr[i].x < 0 || this.bulletArr[i].y < 0 || this.bulletArr[i].x > Default.windowWidth() || this.bulletArr[i].y > Default.windowHeight() )
+				{
+					this.bulletArr[i].removeFromParent();
+					this.bulletArr.splice(i, 1);
+				}
+			}
+		}
 	},
 	//进入结点
 	onEnter:function()

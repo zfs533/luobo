@@ -152,6 +152,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		this.checkCollision();
 		this.refreshPointAnimationPos();
+		this.checkShooting();
 		this.checkBulletCollision();
 		this.checkClearFinish();
 		if( this.monsterArr.length < 1 && !this.dispatchMonster )
@@ -679,7 +680,10 @@ var LuoboLevel01 = ccui.Layout.extend(
 				}
 			}
 		}
-		//this.isShooting control shooting rate
+	},
+	//this.isShooting control shooting rate
+	checkShooting:function()
+	{
 		if(this.weaponArr && this.isShooting )
 		{
 			for( var i = 0; i < this.weaponArr.length; i++ )
