@@ -211,6 +211,7 @@ var LuoboGuidance = ccui.Layout.extend(
 		var moveTo = cc.moveTo(0.3, cc.p(this.bg.x, this.getContentSize().height + this.bg.height/2));
 		var callBack = cc.callFunc(function()
 		{
+			this.that.shwoCanInstallSpace();
 			this.that.countDown();
 			this.removeFromParent();
 		}, this);
@@ -240,6 +241,7 @@ var LuoboGuidance = ccui.Layout.extend(
 			this.step04Func();
 			this.that.guidance = null;
 		}
+		cc.log(this.count);
 	},
 	addListenerr:function(sp, that)
 	{

@@ -18,7 +18,6 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.addTools();
 		this.addDoor();
 		this.getRoadLine();
-		this.moveMonster();
 		this.addLuobo();
 		this.shwoCanInstallSpace();
 		this.controlShooring();
@@ -47,6 +46,11 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.pointAnimate = null;
 		this.selectedTarget = null;
 		this.isShooting = true;
+		this.isCleared = false;
+		this.dispatchMonster = false;
+		this.gameIsOver = false;
+		this.monsterWave = this.data.monsterNum;
+		this.currentMonsterCount = 0;
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG2/BG-hd.plist");
 	},
 	initLayer:function()
@@ -112,6 +116,17 @@ var LuoboLevel02 = ccui.Layout.extend(
 		}
 		
 	},
+	getToolBlood:function(monster)
+	{
+		var bloodBar = ccui.Slider.create();
+		bloodBar.loadProgressBarTexture("MonsterHP01.png", ccui.Widget.PLIST_TEXTURE);
+		bloodBar.loadBarTexture("MonsterHP02.png", ccui.Widget.PLIST_TEXTURE);
+		bloodBar.setPercent(100);
+		bloodBar.setPosition(monster.width/2, monster.height-10);
+		bloodBar.visible = false;
+		monster.blood = bloodBar;
+		monster.addChild(bloodBar, 10);
+	},
 	addTools:function()
 	{
 		for ( var i = 0; i < this.tmxObArr.length; i++ )
@@ -124,6 +139,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				cloud01.x = this.tmxObArr[i].x + this.tmxObArr[i].width/2;
 				cloud01.y = this.tmxObArr[i].y + this.tmxObArr[i].height/2;
 				this.toolLayer.addChild(cloud01, 0);
+				this.getToolBlood(cloud01);
 			}
 			//qi qiu
 			var reg02 = /7Ob\d/;
@@ -133,6 +149,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				cloud01.x = this.tmxObArr[i].x + this.tmxObArr[i].width/2;
 				cloud01.y = this.tmxObArr[i].y + this.tmxObArr[i].height/2;
 				this.toolLayer.addChild(cloud01, 0);
+				this.getToolBlood(cloud01);
 			}
 			//cai hong
 			var reg03 = /4Ob\d/;
@@ -142,6 +159,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				cloud01.x = this.tmxObArr[i].x + this.tmxObArr[i].width/2;
 				cloud01.y = this.tmxObArr[i].y + this.tmxObArr[i].height/2;
 				this.toolLayer.addChild(cloud01, 0);
+				this.getToolBlood(cloud01);
 			}
 			//small cloud
 			var reg04 = /1Ob\d/;
@@ -151,6 +169,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				cloud01.x = this.tmxObArr[i].x + this.tmxObArr[i].width/2;
 				cloud01.y = this.tmxObArr[i].y + this.tmxObArr[i].height/2;
 				this.toolLayer.addChild(cloud01, 0);
+				this.getToolBlood(cloud01);
 			}
 			//red yu zhou
 			var reg05 = /2Ob\d/;
@@ -160,6 +179,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				cloud01.x = this.tmxObArr[i].x + this.tmxObArr[i].width/2;
 				cloud01.y = this.tmxObArr[i].y + this.tmxObArr[i].height/2;
 				this.toolLayer.addChild(cloud01, 0);
+				this.getToolBlood(cloud01);
 			}
 			//song shu
 			var reg06 = /6Ob\d/;
@@ -169,6 +189,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				cloud01.x = this.tmxObArr[i].x + this.tmxObArr[i].width/2;
 				cloud01.y = this.tmxObArr[i].y + this.tmxObArr[i].height/2;
 				this.toolLayer.addChild(cloud01, 0);
+				this.getToolBlood(cloud01);
 			}
 		}
 		this.toolArr = this.toolLayer.getChildren();
@@ -274,10 +295,39 @@ var LuoboLevel02 = ccui.Layout.extend(
 	//start set monster move
 	moveMonster:function()
 	{
+		if ( this.gameIsOver )
+		{
+			return;
+		}
+		this.currentMonsterCount++;
+		if ( this.currentMonsterCount > this.monsterWave )
+		{
+			this.currentMonsterCount = this.monsterWave;
+			this.overGame();
+			return;
+		}
+		if ( this.currentMonsterCount > 9 && this.currentMonsterCount < 20 )
+		{
+			this.currentMonsterWave1.setString(1);
+			this.currentMonsterWave2.setString(this.currentMonsterCount - 10);
+		}
+		else
+		{
+			this.currentMonsterWave1.setString(0);
+			this.currentMonsterWave2.setString(this.currentMonsterCount);
+		}
 		var monster = new LuoboMonster(this);
 		monster.playEnterAnimation();
 		monster.startMove02(1);
 		this.monsterArr.push(monster);
+		this.dispatchMonster = false;
+		this.schedule(function()
+		{
+			var monster = new LuoboMonster(this);
+			monster.playEnterAnimation();
+			monster.startMove02(1);
+			this.monsterArr.push(monster);
+		}, 1, 4);
 	},
 	//luobo
 	addLuobo:function()
@@ -291,48 +341,8 @@ var LuoboLevel02 = ccui.Layout.extend(
 	//show the space that cound install weapon
 	shwoCanInstallSpace:function()
 	{
-		var tempArr = [];
-		for ( var i = 0; i < this.tmxObjArr.length; i++ )
-		{
-			var temp = this.tmxObjArr[i];
-			var ww = temp.width;
-			var yy = temp.height;
-			var tt = 80;
-			
-			var mm = Math.floor(ww/tt);
-			for ( var j = 0; j < mm; j++ )
-			{
-				var space = cc.Sprite.createWithSpriteFrameName("select_00.png");
-				space.x = temp.x + tt/2 + tt*j;
-				space.y = temp.y + tt/2;
-				this.backgroundLayer.addChild(space, 1);
-				tempArr.push(space);
-			}
-			
-			var nn = Math.floor(yy/tt);
-			for ( var j = 0; j < nn; j++ )
-			{
-				var space = cc.Sprite.createWithSpriteFrameName("select_00.png");
-				space.x = temp.x + tt/2
-				space.y = temp.y + tt/2 + tt*j;
-				this.backgroundLayer.addChild(space, 1);
-				tempArr.push(space);
-			}
-		}
-		for ( var i = 0; i < tempArr.length; i++ )
-		{
-			var fadeIn = cc.FadeTo.create(0.2, 250);
-			var fadeOut = cc.FadeTo.create(0.2, 180);
-			var sequence = cc.sequence(fadeIn, fadeOut);
-			tempArr[i].runAction(sequence.repeatForever());
-		}
-		this.scheduleOnce(function()
-		{
-			for ( var i = 0; i < tempArr.length; i++ )
-			{
-				tempArr[i].removeFromParent();
-			}
-		}, 3);
+		var install = new LuoboInstallSpace(this.tmxObjArr);
+		this.addChild(install, 1);
 	},
 	//control shooting frame rate
 	controlShooring:function()
@@ -370,7 +380,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 				{
 					this.hideWeaponLayout();
 					hidePointAnimation(this);
-					this.toolLayerChildTouchFunc(this.monsterArr[i].monster, 2);
+//					this.toolLayerChildTouchFunc(this.monsterArr[i].monster, 2);
 					return;
 				}
 			}
@@ -543,6 +553,16 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.refreshPointAnimationPos();
 		this.checkShooting();
 		this.checkBulletCollision();
+		this.checkClearFinish();
+		if( this.monsterArr.length < 1 && !this.dispatchMonster )
+		{
+			cc.log("********************  "+this.monsterArr.length+"  "+this.dispatchMonster)
+			this.dispatchMonster = true;
+			this.scheduleOnce(function()
+			{
+				this.moveMonster();
+			}, 3);
+		}
 	},
 	//check both the monster and the luobo collision
 	checkMonsAndLuoCollision:function()
@@ -576,7 +596,15 @@ var LuoboLevel02 = ccui.Layout.extend(
 		{
 			for ( var i = 0; i < this.weaponArr.length; i++ )
 			{
-				this.startRotateWeapon(this.weaponArr[i]);
+				//priority in selected target
+				if ( this.selectedTarget && this.jugementDistanceForTool(this.weaponArr[i]) )
+				{
+					this.startRotateWeapon01(this.weaponArr[i]);
+				}
+				else
+				{
+					this.startRotateWeapon(this.weaponArr[i]);
+				}
 			}
 		}
 	},
@@ -604,7 +632,37 @@ var LuoboLevel02 = ccui.Layout.extend(
 		{
 			weapon.firstb.stopAllActions();
 		}
-		
+
+	},
+	//start rotate weapon for tool
+	startRotateWeapon01:function(weapon)
+	{
+		var P1 = this.selectedTarget.getPosition();
+		var P2 = weapon.firstb.getPosition();
+		var distance = cc.pDistance(P1,P2);
+		if( distance <= getBottleData(weapon.type).radius )
+		{
+			var angle = Math.atan2(P1.x - P2.x, P1.y - P2.y);
+			angle = angle*180/Math.PI;
+			weapon.getBottleAnimation(weapon.type, angle);
+			this.shooting(weapon, angle, weapon.type);
+		}
+		else
+		{
+			weapon.firstb.stopAllActions();
+		}
+	},
+	//jugement is or not shooting current selected tool
+	jugementDistanceForTool:function(weapon)
+	{
+		var P1 = this.selectedTarget.getPosition();
+		var P2 = weapon.firstb.getPosition();
+		var distance = cc.pDistance(P1,P2);
+		if( distance <= getBottleData(weapon.type).radius )
+		{
+			return true;
+		}
+		return false
 	},
 	//start shoot the currenttarget monster
 	shooting:function(weapon, angle, weaponType)
@@ -631,7 +689,80 @@ var LuoboLevel02 = ccui.Layout.extend(
 					this.bulletArr[i].removeFromParent();
 					this.bulletArr.splice(i, 1);
 				}
+				//check collision both bullet and tools
+				if ( this.selectedTarget )
+				{
+					var rect1 = this.selectedTarget.getBoundingBox();
+					if ( !this.bulletArr[i] ){break;}
+					var bp = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
+					if ( cc.rectContainsPoint(rect1, bp) )
+					{
+						this.selectedTarget.blood.visible = true;
+						this.selectedTarget.blood.setPercent(this.selectedTarget.blood.getPercent()-this.bulletArr[i].attack);
+						if ( this.selectedTarget.blood.getPercent() <= 0 )
+						{
+							for ( var m = 0; m < this.toolArr.length; m++ )
+							{
+								if ( this.toolArr[m] === this.selectedTarget )
+								{
+									this.toolArr.splice(m, 1);
+								}
+							}
+							getAirAnimateion(this.selectedTarget.getPosition(), this);
+							this.selectedTarget.removeFromParent();
+							hidePointAnimation(this);
+						}
+						this.bulletArr[i].removeFromParent();
+						this.bulletArr.splice(i, 1);
+						return;
+					}
+					else
+					{
+						this.selectedTarget.blood.visible = false;
+					}
+				}
+				
+				//check collision both bullet and monster
+				for ( var j = 0; j < this.monsterArr.length; j++ )
+				{
+					if ( !this.monsterArr[j].monster || !this.bulletArr[i] ){return;}
+					var rect2 = this.monsterArr[j].monster.getBoundingBox(),
+					pp = this.bulletArr[i].getParent().convertToWorldSpace(this.bulletArr[i]);
+					if ( cc.rectContainsPoint(rect2, pp) )
+					{
+						this.monsterArr[j].showBlood(this.bulletArr[i].attack);
+						this.bulletArr[i].removeFromParent();
+						this.bulletArr.splice(i, 1);
+						if ( this.monsterArr[j].blood.getPercent() <= 0 )
+						{
+							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
+							PlayerData.gold += Math.floor(this.monsterArr[j].gold);
+							this.showGoldNumber();
+							if ( this.monsterArr[j].monster && this.pointTemp == this.monsterArr[j].monster )
+							{
+								hidePointAnimation(this);
+							}
+							this.monsterArr[j].monster.removeFromParent();
+							this.monsterArr.splice(j, 1);
+						}
+						break;
+					}
+					else
+					{
+						this.monsterArr[j].hideBlood();
+					}
+				}
 			}
+		}
+	},
+	//
+	checkClearFinish:function()
+	{
+		if ( this.toolArr.length === 0 && !this.isCleared )
+		{
+			var clear = new LuoboCleared();
+			this.addChild(clear, 1000);
+			this.isCleared = true;
 		}
 	},
 	//进入结点
@@ -641,6 +772,32 @@ var LuoboLevel02 = ccui.Layout.extend(
 		var countDown = new LuoboCountDown(this);
 		this.addChild(countDown, 100);
 		this.playArrowAnimate();
+	},
+	//game is over
+	overGame:function()
+	{
+		//data {wave:15, passWave:15, isWin:true, level:1}
+		if ( this.currentMonsterCount < this.monsterWave )
+		{
+			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:false,level:this.data.level};
+		}
+		else
+		{
+			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:true,level:this.data.level};
+		}
+		var mm = new LuoboOverLevel(data, this);
+		this.addChild(mm, 100);
+		this.gameIsOver = true; 
+		this.unscheduleUpdate();
+		this.removeAllMonster();
+	},
+	removeAllMonster:function()
+	{
+		for ( var i = 0; i < this.monsterArr.length; i++ )
+		{
+			this.monsterArr[i].monster.removeFromParent();
+			this.monsterArr.splice(i, 1);
+		}
 	},
 	//离开完成
 	onExit:function()

@@ -30,6 +30,7 @@
         "src/zfs/module/themes/public/LuoboMonster.js",
         "src/zfs/module/themes/public/LuoboCountDown.js",
         "src/zfs/module/themes/public/LuoboProtected.js",
+        "src/zfs/module/themes/public/LuoboInstallSpace.js",
         "src/zfs/module/themes/public/LuoboBottomWeibo.js",
         "src/zfs/module/themes/public/LuoboOverLevel.js",
         "src/zfs/module/themes/LuoboWeapon/LuoboBottleBullet.js",

@@ -13,7 +13,6 @@ var LuoboBottleWeapon = cc.Sprite.extend(
 		this.setInformation();
 		this.handleWeaponAttack();
 		this.jugementUpgrade();
-		
 	},
 	variable:function()
 	{

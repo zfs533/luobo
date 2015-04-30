@@ -19,8 +19,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.findLuoboRoad();
 		this.handleShooting();
 		this.showGoldNumber();
-		this.playArrowAnimate();
-//		this.addGuidance();
+//		this.playArrowAnimate();
+		this.addGuidance();
 		this.addTouchEventListener(this.touchLayerFunc, this);
 //		var img = ccui.ImageView.create("targetscleard_CN.png", ccui.Widget.PLIST_TEXTURE);
 //		img.x = img.y  = 300;
@@ -35,6 +35,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.weaponArr = [];
 		this.rangeArr  = [];
 		this.monsterArr = [];
+		this.tmxObjArr = [];
 		this.tempWeapon = null;
 		this.gameIsOver = false;
 		this.weaponLayout = null;//weapon panel
@@ -51,7 +52,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	addGuidance:function()
 	{
 		this.guidance = new LuoboGuidance(this);
-		this.addChild(this.guidance, 50);
+		this.addChild(this.guidance, 9);
 	},
 	//tmxtiled map
 	handleTMXtileMap:function()
@@ -60,11 +61,15 @@ var LuoboLevel01 = ccui.Layout.extend(
 		this.addChild(this.tmxTiled, 1);
 		this.tmxObjectGroups = this.tmxTiled.getObjectGroups()[0];//cc.TMXObjectGroup
 		this.tmxOGArr = this.tmxObjectGroups.getObjects();//array
-		for( var mm in this.tmxObjectGroups.getObject("Obj1"))
+		for ( var i = 0; i < this.tmxOGArr.length; i++ )
 		{
-//			cc.log(mm);
+			//1Ob1
+			var reg01 = /Obj\d/g;
+			if ( this.tmxOGArr[i].name.match(reg01) )
+			{
+				this.tmxObjArr.push(this.tmxOGArr[i]);
+			}
 		}
-		cc.log(this.tmxOGArr[10].width+" 4565456 "+this.tmxObjectGroups.getObject("Obj1").height);
 	},
 	//find luobo road
 	findLuoboRoad:function()
@@ -121,7 +126,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		var spriteLayer = cc.Layer.create();
 		spriteLayer.setContentSize(Default.windowSize());
-		this.addChild(spriteLayer, 20);
+		this.addChild(spriteLayer, 2);
 		
 		//door
 		var obj1 = this.tmxObjectGroups.getObject("Obj9");
@@ -562,7 +567,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 //		this.collisionLayer.addChild(circle, 0);
 	},
 	//handle touch the bullet base event
-	bottleWeaponfunc:function(target, state, weaponType)
+	bottleWeaponfunc:function(target, state, weaponType)//TODO
 	{
 		if( state === ccui.Widget.TOUCH_ENDED )
 		{
@@ -574,12 +579,13 @@ var LuoboLevel01 = ccui.Layout.extend(
 				return;
 			}
 			var range = new handleShootingRange(this, weaponType, target.id);
-			this.collisionLayer.addChild(range, 50);
+			this.collisionLayer.addChild(range, 0);
 			range.setPosition(target.getPosition());
 			this.rangeArr.push(range);
 			this.tempWeapon = target;
 			if ( this.guidance )
 			{
+				cc.log("zhoufangsheng88888888888888888888888888")
 				this.guidance.refreshHandPosition();
 			}
 		}
@@ -647,7 +653,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 					}
 				}
 				
-				//check collision of both bullet and monster
+				//check collision both bullet and monster
 				for(var j = 0,len = this.monsterArr.length; j < len; j++)
 				{
 					if( !this.monsterArr[j].monster || !this.bulletArr[i] ){return;}
@@ -663,8 +669,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 							getAirAnimateion(this.monsterArr[j].monster.getPosition(), this);
 							PlayerData.gold += Math.floor(this.monsterArr[j].gold);//消灭怪物获得金币
 							this.showGoldNumber();
-							if ( !this.monsterArr[i] ){continue;}
-							if( this.monsterArr[i].monster && this.pointTemp == this.monsterArr[i].monster )
+							if( this.monsterArr[j].monster && this.pointTemp == this.monsterArr[j].monster )
 							{
 								hidePointAnimation(this);
 							}
@@ -688,10 +693,14 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			for( var i = 0; i < this.weaponArr.length; i++ )
 			{
-				this.startRotateWeapon(this.weaponArr[i]);
-				if ( this.selectedTarget )
+				//priority in selected target
+				if ( this.selectedTarget && this.jugementDistanceForTool(this.weaponArr[i]) )
 				{
 					this.startRotateWeapon01(this.weaponArr[i]);
+				}
+				else
+				{
+					this.startRotateWeapon(this.weaponArr[i]);
 				}
 			}
 		}
@@ -739,6 +748,18 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			weapon.firstb.stopAllActions();
 		}
+	},
+	//jugement is or not shooting current selected tool
+	jugementDistanceForTool:function(weapon)
+	{
+		var P1 = this.selectedTarget.getPosition();
+		var P2 = weapon.firstb.getPosition();
+		var distance = cc.pDistance(P1,P2);
+		if( distance <= getBottleData(weapon.type).radius )
+		{
+			return true;
+		}
+		return false
 	},
 	/**
 	 * start fire
@@ -802,8 +823,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 	onEnter:function()
 	{
 		this._super();
-		var countDown = new LuoboCountDown(this);
-		this.addChild(countDown, 100);
+//		var countDown = new LuoboCountDown(this);
+//		this.addChild(countDown, 100);
 	},
 	countDown:function()
 	{
@@ -821,7 +842,14 @@ var LuoboLevel01 = ccui.Layout.extend(
 		for ( var i = 0; i < this.monsterArr.length; i++ )
 		{
 			this.monsterArr[i].monster.removeFromParent();
+			this.monsterArr.splice(i, 1);
 		}
+	},
+	//show the space that cound install weapon
+	shwoCanInstallSpace:function()
+	{
+		var install = new LuoboInstallSpace(this.tmxObjArr);
+		this.addChild(install, 1);
 	}
 });
 
