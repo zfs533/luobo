@@ -49,14 +49,28 @@ var LuoboArrow = cc.Layer.extend(
 		}
 		this.startAnimate();
 	},
+	type03:function()
+	{
+		this.count = 0;
+		this.arrowArr = [];
+		for ( var i = 0; i < 3; i++ )
+		{
+			var arrow = ccui.ImageView.create("arrow.png", ccui.Widget.PLIST_TEXTURE);
+			arrow.setRotation(90);
+			arrow.x = this.data.x + this.data.width/2 + 40;
+			arrow.y = this.data.y - (this.data.height+40)*i - 50;
+			arrow.setOpacity(0);
+			this.addChild(arrow);
+			this.arrowArr.push(arrow);
+		}
+		this.startAnimate();
+	},
 	startAnimate:function()
 	{
-		this.addUI();
-		this.controlLanguage();
-		this.setInformation();
+		this.playAnimatee();
 	},
-	//加载控件
-	addUI:function()
+	//play actions
+	playAnimatee:function()
 	{
 		var fadeIn01 = cc.fadeIn(0.3);
 		var callFunc = cc.callFunc(function()
@@ -77,7 +91,7 @@ var LuoboArrow = cc.Layer.extend(
 						this.removee();
 						return;
 					}
-					this.addUI();
+					this.playAnimatee();
 				}, this);
 				var sequnce = cc.sequence(fadeIn01, callFunc);
 				this.arrowArr[2].runAction(sequnce);
@@ -91,14 +105,6 @@ var LuoboArrow = cc.Layer.extend(
 	removee:function()
 	{
 		this.removeFromParent();
-	},
-	//标签字符串显示控制
-	controlLanguage:function()
-	{
-	},
-	//设置信息
-	setInformation:function()
-	{
 	},
 	//进入结点
 	onEnter:function()

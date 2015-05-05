@@ -1,13 +1,15 @@
 var LuoboMenu = ccui.Layout.extend(
 {
 	/**
+	 * @param level:关卡
 	 * @param data
 	 * {"isLocked":false,"monsterNum":15,"wave":"ss_waves_15.png","level":1}
 	 */
-	ctor:function(data)
+	ctor:function(data, level)
 	{
 		this._super();
 		this.data = data;
+		this.level = level;
 		this.zinit();
 		this.addUI();
 		this.setInformation();
@@ -64,12 +66,36 @@ var LuoboMenu = ccui.Layout.extend(
 		}
 	},
 	//replay game
-	restartBtnEvent:function(target, state)
+	restartBtnEvent:function(target, state)//TODO
 	{
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
-			var scene = LuoboLevel01.createScene(this.data);
-			cc.director.runScene(cc.TransitionFade.create(changeSceneTime, scene));
+			switch ( this.level ) 
+			{
+			case 1:
+				Themes01LevelManager.playLevel01(this.data);
+				break;
+
+			case 2:
+				Themes01LevelManager.playLevel02(this.data);
+				break;
+				
+			case 3:
+				Themes01LevelManager.playLevel03(this.data);
+				break;
+				
+			case 4:
+				break;
+				
+			case 5:
+				break;
+				
+			case 6:
+				break;
+				
+			default:
+				break;
+			}
 		}
 	},
 	//select level of game

@@ -46,6 +46,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			this.luoboPro.playShakeAnimate();
 		}, 10);
+		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist");
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG1/BG-hd.plist");
 	},
 	//new player guidance
@@ -836,6 +837,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		this._super();
 		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Theme1/BG1/BG-hd.plist");
+		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Theme1/Items/Object01-hd.plist");
 	},
 	removeAllMonster:function()
 	{

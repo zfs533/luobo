@@ -38,6 +38,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.rangeArr = [];
 		this.bulletArr = [];
 		this.luoboPro = null;
+		this.topInfo = null;
 		this.luobo = null;
 		this.addRect = null;
 		this.tempWeapon = null;
@@ -52,20 +53,21 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.monsterWave = this.data.monsterNum;
 		this.currentMonsterCount = 0;
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG2/BG-hd.plist");
+		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist");
 	},
 	initLayer:function()
 	{
 		this.backgroundLayer = cc.Layer.create();
 		this.addChild(this.backgroundLayer, 0);
-		
-		this.topInfoLayer	= cc.Layer.create();
-		this.addChild(this.topInfoLayer, 20);
-		
+
 		this.toolLayer = cc.Layer.create();
 		this.addChild(this.toolLayer, 1);
-		
+
 		this.collisionLayer = cc.Layer.create();
 		this.addChild(this.collisionLayer,15);
+
+		this.topInfoLayer	= cc.Layer.create();
+		this.addChild(this.topInfoLayer, 20);
 	},
 	//初始化
 	zinit:function()
@@ -114,7 +116,6 @@ var LuoboLevel02 = ccui.Layout.extend(
 				this.tmxTArr.push(tmxOGarr[i]);
 			}
 		}
-		
 	},
 	getToolBlood:function(monster)
 	{
@@ -804,6 +805,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 	{
 		this._super();
 		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Theme1/BG2/BG-hd.plist");
+		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Theme1/Items/Object01-hd.plist");
 	},
 	//进入结点完成
 	onEnterTransitionDidFinish:function()

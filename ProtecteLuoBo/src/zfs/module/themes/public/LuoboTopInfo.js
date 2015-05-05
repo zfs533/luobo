@@ -144,7 +144,7 @@ var LuoboTopInfo = cc.Layer.extend(
 			hidePointAnimation(this.that);
 			hideAddWeaponAnimate(this.that);
 			this.that.hideWeaponLayout();
-			var me = new LuoboMenu(this.data);
+			var me = new LuoboMenu(this.data, this.data.level);
 			this.that.addChild(me, 100);
 		}
 		this.that.menuBtnTouchEvent(target, state);

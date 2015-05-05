@@ -15,3 +15,9 @@ Themes01LevelManager.playLevel02 = function(lock)
 	cc.director.runScene(cc.TransitionProgressInOut.create(changeSceneTime, level02));
 };
 
+Themes01LevelManager.playLevel03 = function(lock)
+{
+	var level03 = LuoboLevel03.createScene(lock);
+	cc.director.runScene(cc.TransitionProgressInOut.create(changeSceneTime, level03));
+};
+

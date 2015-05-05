@@ -63,7 +63,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 		this.maps = [
 		             {map:"ss_map01.png", locked:false, tower:"ss_towers_01.png", level:1, wave:"ss_waves_15.png", num:15},
 		             {map:"ss_map02.png", locked:false, tower:"ss_towers_02.png", level:2, wave:"ss_waves_15.png", num:15},
-		             {map:"ss_map03.png", locked:true, tower:"ss_towers_03.png", level:3, wave:"ss_waves_20.png", num:20},
+		             {map:"ss_map03.png", locked:false, tower:"ss_towers_03.png", level:3, wave:"ss_waves_20.png", num:20},
 		             {map:"ss_map04.png", locked:true, tower:"ss_towers_04.png", level:4, wave:"ss_waves_20.png", num:20},
 		             {map:"ss_map05.png", locked:true, tower:"ss_towers_05.png", level:5, wave:"ss_waves_20.png", num:20},
 		             {map:"ss_map06.png", locked:true, tower:"ss_towers_06.png", level:6, wave:"ss_waves_25.png", num:25},
@@ -83,70 +83,10 @@ var LuoboThemesScene01 = ccui.Layout.extend
 		
 		for(var i = 0; i < this.maps.length; i++)
 		{
-			var page = this.getPageInstance(this.maps[i]);
+			var page = new LuoboThemesPage(this.maps[i], this);
 			this.page.addPage(page);
 		}
 		
-	},
-	// get map page instance
-	getPageInstance:function(maps)
-	{
-		var layout = ccui.Layout.create();
-		layout.setSize(cc.size(this.width , 440));
-		var map = ccui.ImageView.create(maps.map,ccui.Widget.PLIST_TEXTURE);
-		layout.isLocked = maps.locked;
-		layout.monsterNum = maps.num;
-		layout.wave = maps.wave;
-		layout.level = maps.level;
-		map.setPosition(layout.width/2, layout.height/2);
-		layout.addChild(map, 5);
-
-		var tower = ccui.ImageView.create(maps.tower,ccui.Widget.PLIST_TEXTURE);
-		tower.setPosition(layout.width/2, map.y - map.height/2-tower.height/2+10);
-		layout.addChild(tower, 5);
-		
-		if(layout.isLocked)
-		{
-			lockedIco = ccui.ImageView.create("ss_locked_icon.png", ccui.Widget.PLIST_TEXTURE);
-			lockedIco.setPosition(map.x+130, lockedIco.height-30);
-			lockedIco.addTouchEventListener(this.pageViewEventFunc, this);
-			layout.addChild(lockedIco, 5);
-		}
-		map.addTouchEventListener(this.pageViewEventFunc, this);
-		tower.addTouchEventListener(this.pageViewEventFunc, this);
-		return layout;
-	},
-	pageViewEventFunc:function(target,state)
-	{
-		switch (state) 
-		{
-			case ccui.Widget.TOUCH_BEGAN:
-				cc.log("began")
-				var lock = this.page.getPage((this.page.getCurPageIndex())).isLocked;
-				this.waveNum.loadTexture(this.page.getPage((this.page.getCurPageIndex())).wave, ccui.Widget.PLIST_TEXTURE);
-				this.jugementLevelState(!lock);
-				break;
-				
-			case ccui.Widget.TOUCH_ENDED:
-				var lock = this.page.getPage((this.page.getCurPageIndex()));
-				if(lock.isLocked)
-				{
-					var theme01 = new LuoBoLockLayout("themes01");
-					theme01.setPosition(this.width-theme01.width>>1,this.height-theme01.height>>1);
-					this.addChild(theme01, 100);
-				}
-				else
-				{
-					this.gotoCurrentLevel(lock);
-				}
-				break;
-				
-			case ccui.Widget.TOUCH_CANCELED:
-				break;
-				
-			default:
-				break;
-		}
 	},
 	//start select level
 	startBtnEvent:function(target, state)
@@ -154,6 +94,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
 			var lock = this.page.getPage((this.page.getCurPageIndex()));
+			cc.log(this.page.getCurPageIndex()+"  *************");
 			this.gotoCurrentLevel(lock);
 		}
 	},
@@ -170,6 +111,7 @@ var LuoboThemesScene01 = ccui.Layout.extend
 			break;
 			
 		case 3:
+			Themes01LevelManager.playLevel03(data);
 			break;
 			
 		case 4:
