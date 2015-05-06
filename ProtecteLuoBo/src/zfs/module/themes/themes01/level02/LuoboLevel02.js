@@ -21,11 +21,13 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.addLuobo();
 		this.shwoCanInstallSpace();
 		this.controlShooring();
+		this.initWeaponInstail();
 		this.addTouchEventListener(this.touchLayerFunc, this);
 	},
 	variable:function(data)
 	{
 		this.data = data;
+		this.data.monsterNum = data.num;
 		this.tmxObArr = [];
 		this.tmxObjArr = [];
 		this.tmxPtArr = [];
@@ -69,7 +71,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		this.topInfoLayer	= cc.Layer.create();
 		this.addChild(this.topInfoLayer, 20);
 	},
-	//初始化
+	//initailize scene
 	zinit:function()
 	{
 		this.setSize(cc.size(Default.windowWidth(), Default.windowHeight()));
@@ -117,6 +119,22 @@ var LuoboLevel02 = ccui.Layout.extend(
 			}
 		}
 	},
+	//install initailize weapon
+	initWeaponInstail:function()//TODO
+	{
+		for ( var i = 0; i < this.tmxTArr.length; i++ )
+		{
+			var p = cc.p(this.tmxTArr[i].x, this.tmxTArr[i].y);
+			var xx = Math.floor(p.x/80)*80 + 40;
+			var yy = Math.floor(p.y/80)*80 + 40;
+			var point = cc.p(xx, yy);
+			var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
+			this.addChild(bottleWeapon.base, 30);
+			this.addChild(bottleWeapon.firstb, 30);
+			this.weaponArr.push(bottleWeapon);
+		}
+	},
+	//the bloodBar for tools
 	getToolBlood:function(monster)
 	{
 		var bloodBar = ccui.Slider.create();
@@ -128,6 +146,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		monster.blood = bloodBar;
 		monster.addChild(bloodBar, 10);
 	},
+	//install tools
 	addTools:function()
 	{
 		for ( var i = 0; i < this.tmxObArr.length; i++ )
@@ -777,14 +796,15 @@ var LuoboLevel02 = ccui.Layout.extend(
 	//game is over
 	overGame:function()
 	{
-		//data {wave:15, passWave:15, isWin:true, level:1}
 		if ( this.currentMonsterCount < this.monsterWave )
 		{
-			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:false,level:this.data.level};
+			var data = {id:this.data.id, wave:this.monsterWave, passWave:this.currentMonsterCount, 
+					isWin:false,level:this.data.level, live:this.luoboPro.live, clear:this.isCleared};
 		}
 		else
 		{
-			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:true,level:this.data.level};
+			var data = {id:this.data.id, wave:this.monsterWave, passWave:this.currentMonsterCount, 
+					isWin:true,level:this.data.level, live:this.luoboPro.live, clear:this.isCleared};
 		}
 		var mm = new LuoboOverLevel(data, this);
 		this.addChild(mm, 100);

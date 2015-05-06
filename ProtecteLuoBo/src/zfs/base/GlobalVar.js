@@ -3,4 +3,5 @@
  */
 var GlobalVar = 
 {
+		isGuidanced:false,//是否完成新手引导
 };

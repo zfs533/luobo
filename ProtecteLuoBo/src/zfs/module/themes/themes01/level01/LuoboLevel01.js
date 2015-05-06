@@ -9,8 +9,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 	 */
 	ctor:function(data)
 	{
+		print(data);
+		cc.log("hzoufangsh");
 		this._super();
 		this.data = data;
+		this.data.monsterNum = data.num;
 		this.initVariable();
 		this.zinit();
 		this.handleTMXtileMap();
@@ -48,12 +51,6 @@ var LuoboLevel01 = ccui.Layout.extend(
 		}, 10);
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist");
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG1/BG-hd.plist");
-	},
-	//new player guidance
-	addGuidance:function()
-	{
-		this.guidance = new LuoboGuidance(this);
-		this.addChild(this.guidance, 9);
 	},
 	//tmxtiled map
 	handleTMXtileMap:function()
@@ -803,29 +800,41 @@ var LuoboLevel01 = ccui.Layout.extend(
 		}
 	},
 	//pass level
-	overGame:function()
+	overGame:function()//TODO
 	{
-		//data {wave:15, passWave:15, isWin:true, level:1}
 		if ( this.currentMonsterCount < this.monsterWave )
 		{
-			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:false,level:this.data.level};
+			var data = {id:this.data.id, wave:this.monsterWave, passWave:this.currentMonsterCount, 
+					isWin:false,level:this.data.level, live:this.luoboPro.live, clear:this.isCleared};
 		}
 		else
 		{
-			var data = {wave:this.monsterWave, passWave:this.currentMonsterCount, isWin:true,level:this.data.level};
+			var data = {id:this.data.id, wave:this.monsterWave, passWave:this.currentMonsterCount, 
+					isWin:true,level:this.data.level, live:this.luoboPro.live, clear:this.isCleared};
 		}
 		var mm = new LuoboOverLevel(data, this);
 		this.addChild(mm, 100);
 		this.gameIsOver = true; 
 		this.unscheduleUpdate();
+		cc.log("gameisover");
 		this.removeAllMonster();
+	},
+	//new player guidance
+	addGuidance:function()
+	{
+		if ( GlobalVar.isGuidanced )
+		{
+			this.countDown();
+			return;
+		}
+		GlobalVar.isGuidanced = true;
+		this.guidance = new LuoboGuidance(this);
+		this.addChild(this.guidance, 9);
 	},
 	//进入结点
 	onEnter:function()
 	{
 		this._super();
-//		var countDown = new LuoboCountDown(this);
-//		this.addChild(countDown, 100);
 	},
 	countDown:function()
 	{

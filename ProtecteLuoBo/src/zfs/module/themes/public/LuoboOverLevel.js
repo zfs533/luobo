@@ -6,7 +6,7 @@ var LuoboOverLevel = ccui.Layout.extend(
 	/**
 	 * 
 	 * @param data
-	 * {wave:15, passWave:15, isWin:true, level:1}
+	 * {id:1001,wave:15, passWave:15, isWin:true, level:1, live:10, clear:false}
 	 */
 	ctor:function(data, that)
 	{
@@ -44,6 +44,12 @@ var LuoboOverLevel = ccui.Layout.extend(
 	//通关成功
 	levelWin:function()
 	{
+		cc.log(this.data.id+" nextLevelID="+(this.data.id+1));
+		var lvData = checkThemes01DataById(this.data.id), nextLvData = checkThemes01DataById(this.data.id +1 );
+		nextLvData.locked = 0;//开启下一个关卡
+		lvData.isOver = true;
+		lvData.clearAll = this.data.clear;
+		
 		var winBg = cc.Sprite.createWithSpriteFrameName("win_bg.png");
 		winBg.setPosition(this.width/2, this.height/2);
 		this.addChild(winBg);
@@ -51,19 +57,26 @@ var LuoboOverLevel = ccui.Layout.extend(
 		var winBg_cn = cc.Sprite.createWithSpriteFrameName("win_bg_CN.png");
 		winBg_cn.setPosition(this.width/2, this.height/2);
 		this.addChild(winBg_cn, 1);
-
-		var honor_1 = cc.Sprite.createWithSpriteFrameName("gainhonor_1.png");//荣誉//普通
+		
+		var honorA = ["gainhonor_1.png", "gainhonor_2.png", "gainhonor_3.png"], honor_1;
+		if ( this.data.live === 10 )//荣誉//三颗星
+		{
+			honor_1 = cc.Sprite.createWithSpriteFrameName(honorA[2]);
+			lvData.honor = 3;
+		}
+		else if ( this.data.live >= 5 && this.data.live < 10 )
+		{
+			honor_1 = cc.Sprite.createWithSpriteFrameName(honorA[1]);
+			lvData.honor = 2;
+		}
+		else
+		{
+			honor_1 = cc.Sprite.createWithSpriteFrameName(honorA[0]);
+			lvData.honor = 1;
+		}
 		honor_1.setPosition(this.width/2, this.height/2+winBg.height/2 - honor_1.height/2);
 		this.addChild(honor_1, 1);
 
-//		var honor_2 = cc.Sprite.createWithSpriteFrameName("gainhonor_2.png");//荣誉//银牌
-//		honor_2.setPosition(this.width/2, this.height/2+winBg.height/2 - honor_1.height/2);
-//		this.addChild(honor_2, 1);
-
-//		var honor_3 = cc.Sprite.createWithSpriteFrameName("gainhonor_3.png");//荣誉//金牌
-//		honor_3.setPosition(this.width/2, this.height/2+winBg.height/2 - honor_1.height/2);
-//		this.addChild(honor_3, 1);
-		
 		var selectLevel = BaseButton.createe("select_normal_CN.png", "select_pressed_CN.png", "", ccui.Widget.PLIST_TEXTURE);
 		selectLevel.setPosition(winBg.x - selectLevel.width/2, winBg.y -selectLevel.height-10);
 		selectLevel.addTouchEventListener(this.selectLevelEvent, this);
@@ -169,8 +182,50 @@ var LuoboOverLevel = ccui.Layout.extend(
 	{
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
-			var scene = LuoboLevel01.createScene(this.that.data);
-			cc.director.runScene(cc.TransitionFade.create(changeSceneTime, scene));
+			switch ( this.data.level ) 
+			{
+			case 1:
+				Themes01LevelManager.playLevel01(this.that.data);
+				break;
+
+			case 2:
+				Themes01LevelManager.playLevel02(this.that.data);
+				break;
+				
+			case 3:
+				Themes01LevelManager.playLevel03(this.that.data);
+				break;
+				
+			case 4:
+				break;
+				
+			case 5:
+				break;
+				
+			case 6:
+				break;
+				
+			case 7:
+				break;
+				
+			case 8:
+				break;
+				
+			case 9:
+				break;
+				
+			case 10:
+				break;
+				
+			case 11:
+				break;
+				
+			case 12:
+				break;
+				
+			default:
+				break;
+			}
 		}
 	},
 	//设置信息

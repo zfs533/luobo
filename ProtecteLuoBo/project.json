@@ -20,6 +20,7 @@
         "src/zfs/base/AlertView.js",
         "src/zfs/dataManager/LuoboLoadJsonFile.js",
         "src/zfs/dataManager/LuoboPlayerData.js",
+        "src/zfs/dataManager/LuoboCheckFunc.js",
         "src/zfs/module/themes/LuoboAnimation.js",
         "src/zfs/module/themes/LuoBoThemesScene.js",
         "src/zfs/module/themes/LuoBoWeaponCreate.js",

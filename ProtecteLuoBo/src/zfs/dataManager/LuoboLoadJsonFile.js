@@ -10,3 +10,8 @@ var MasterData = cc.loader.getRes("src/zfs/dataManager/data/monster.json");//主
  */
 var BottleData = cc.loader.getRes("src/zfs/dataManager/data/bottle.json");//瓶子炮台配置
 var RangeData = BottleData;
+/**
+ * 	关卡id		关卡图片			   locked/0解锁/1未解锁    关卡炮台					关卡		怪物波数图					怪物波数		是否过关	是否清除所有道具		过关荣誉1一颗星2二颗星3三颗星
+ * {"id":1001,"map":"ss_map01.png","locked":0,"tower":"ss_towers_01.png","level":1,"wave":"ss_waves_15.png","num":15,"isOver":0,"clearAll":0,"honor":0}
+ */
+var Themes01LevelData = cc.loader.getRes("src/zfs/dataManager/data/themes01level.json")//主题一关卡配置

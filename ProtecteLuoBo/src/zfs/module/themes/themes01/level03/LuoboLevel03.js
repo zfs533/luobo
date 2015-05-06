@@ -307,7 +307,6 @@ var LuoboLevel03 = ccui.Layout.extend(
 	},
 	update:function()
 	{
-		cc.log("游戏开始哒");
 	},
 	onEnter:function()
 	{
