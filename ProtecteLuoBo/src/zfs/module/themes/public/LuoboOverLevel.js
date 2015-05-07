@@ -174,7 +174,11 @@ var LuoboOverLevel = ccui.Layout.extend(
 	{
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
-			this.removeFromParent();
+			var scene = LuoboThemesScene01.createScene();
+			cc.director.runScene(cc.TransitionFade.create(changeSceneTime, scene));
+			/*var data = checkThemes01DataById(this.data.id+1);
+			this.changeScene(data);
+			this.removeFromParent();*/
 		}
 	},
 	//retry current level
@@ -182,50 +186,55 @@ var LuoboOverLevel = ccui.Layout.extend(
 	{
 		if ( state === ccui.Widget.TOUCH_ENDED )
 		{
-			switch ( this.data.level ) 
-			{
-			case 1:
-				Themes01LevelManager.playLevel01(this.that.data);
-				break;
+			this.changeScene(this.that.data);
+		}
+	},
+	changeScene:function(data)
+	{
+		print(data);
+		switch ( data.level ) 
+		{
+		case 1:
+			Themes01LevelManager.playLevel01(data);
+			break;
 
-			case 2:
-				Themes01LevelManager.playLevel02(this.that.data);
-				break;
-				
-			case 3:
-				Themes01LevelManager.playLevel03(this.that.data);
-				break;
-				
-			case 4:
-				break;
-				
-			case 5:
-				break;
-				
-			case 6:
-				break;
-				
-			case 7:
-				break;
-				
-			case 8:
-				break;
-				
-			case 9:
-				break;
-				
-			case 10:
-				break;
-				
-			case 11:
-				break;
-				
-			case 12:
-				break;
-				
-			default:
-				break;
-			}
+		case 2:
+			Themes01LevelManager.playLevel02(data);
+			break;
+
+		case 3:
+			Themes01LevelManager.playLevel03(data);
+			break;
+
+		case 4:
+			break;
+
+		case 5:
+			break;
+
+		case 6:
+			break;
+
+		case 7:
+			break;
+
+		case 8:
+			break;
+
+		case 9:
+			break;
+
+		case 10:
+			break;
+
+		case 11:
+			break;
+
+		case 12:
+			break;
+
+		default:
+			break;
 		}
 	},
 	//设置信息

@@ -6,22 +6,24 @@
         "tower":"ss_towers_01.png",
         "level":1,
         "wave":"ss_waves_15.png",
-        "num":2,
+        "num":1,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1002,
         "map":"ss_map02.png",
-        "locked":0,
+        "locked":1,
         "tower":"ss_towers_02.png",
         "level":2,
         "wave":"ss_waves_15.png",
         "num":15,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":"NT3_CN.png"
     },
     {
         "id":1003,
@@ -33,7 +35,8 @@
         "num":20,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":"NT4_CN.png"
     },
     {
         "id":1004,
@@ -45,7 +48,8 @@
         "num":20,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":"NT5_CN.png"
     },
     {
         "id":1005,
@@ -57,7 +61,8 @@
         "num":20,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1006,
@@ -69,7 +74,8 @@
         "num":25,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1007,
@@ -81,7 +87,8 @@
         "num":20,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1008,
@@ -93,7 +100,8 @@
         "num":25,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1009,
@@ -105,7 +113,8 @@
         "num":20,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1010,
@@ -117,7 +126,8 @@
         "num":25,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1011,
@@ -129,7 +139,8 @@
         "num":25,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     },
     {
         "id":1012,
@@ -141,6 +152,7 @@
         "num":25,
         "isOver":0,
         "clearAll":0,
-        "honor":0
+        "honor":0,
+        "newW":0
     }
 ]

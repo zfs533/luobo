@@ -217,6 +217,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 	{
 		var toolLayer = cc.Layer.create();
 		toolLayer.setContentSize(Default.windowSize());
+		this.toolLayer = toolLayer;
 		this.addChild(toolLayer, 1);
 		//small cloud
 		var obj1 = this.tmxObjectGroups.getObject("1Ob1");
@@ -848,6 +849,11 @@ var LuoboLevel01 = ccui.Layout.extend(
 		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Theme1/BG1/BG-hd.plist");
 		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Theme1/Items/Object01-hd.plist");
 	},
+	//预备离开
+	onExitTransitionDidStart:function()
+	{
+		this._super();
+	},
 	removeAllMonster:function()
 	{
 		for ( var i = 0; i < this.monsterArr.length; i++ )
@@ -875,7 +881,7 @@ LuoboLevel01.createScene = function(data)
 
 
 
-
+//{id:11, itemid:1111,num:22};
 
 
 

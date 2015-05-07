@@ -39,6 +39,7 @@ var LuoboLevel03 = ccui.Layout.extend(
 		this.speedBtn = null;//速度按钮
 		this.pauseBtn = null;//暂停播放按钮
 		this.menuBtn = null;//菜单按钮
+		
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG3/BG-hd.plist");
 		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object02-hd.plist");
 	},
@@ -311,6 +312,18 @@ var LuoboLevel03 = ccui.Layout.extend(
 	onEnter:function()
 	{
 		this._super();
+		if ( this.data.newW )
+		{
+			var newW = new LuoboGetNewWeapon(this.data.newW, this);
+			this.addChild(newW, 100);
+		}
+		else
+		{
+			this.startGame();
+		}
+	},
+	startGame:function()
+	{
 		var countDown = new LuoboCountDown(this);
 		this.addChild(countDown, 100);
 		this.playArrowAnimate();

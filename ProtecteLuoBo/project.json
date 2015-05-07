@@ -38,6 +38,7 @@
         "src/zfs/module/themes/LuoboWeapon/LuoboBottleBullet.js",
         "src/zfs/module/themes/LuoboWeapon/LuoboBottleWeapon.js",
         "src/zfs/module/themes/LuoboWeapon/LuoboWeaponPanel.js",
+        "src/zfs/module/themes/LuoboWeapon/LuoboGetNewWeapon.js",
         "src/zfs/module/themes/themes01/level01/LuoboGuidance.js",
         "src/zfs/module/themes/themes01/level01/LuoboConfig.js",
         "src/zfs/module/themes/themes01/LuoboThemesScene01.js",
