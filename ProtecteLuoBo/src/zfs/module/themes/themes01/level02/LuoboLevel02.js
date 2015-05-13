@@ -131,7 +131,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 			var point = cc.p(xx, yy);
 			var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
 			this.addChild(bottleWeapon.base, 30);
-			this.addChild(bottleWeapon.firstb, 30);
+			this.addChild(bottleWeapon.firstb, 31);
 			this.weaponArr.push(bottleWeapon);
 		}
 	},
@@ -478,7 +478,7 @@ var LuoboLevel02 = ccui.Layout.extend(
 		getAirAnimateion(point, this);
 		var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
 		this.addChild(bottleWeapon.base, 30);
-		this.addChild(bottleWeapon.firstb, 30);
+		this.addChild(bottleWeapon.firstb, 31);
 		this.weaponArr.push(bottleWeapon);
 		PlayerData.gold -= bottleWeapon.value;
 		this.showGoldNumber();

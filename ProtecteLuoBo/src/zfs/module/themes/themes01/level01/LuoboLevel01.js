@@ -31,6 +31,8 @@ var LuoboLevel01 = ccui.Layout.extend(
 	},
 	initVariable:function()
 	{
+		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist");
+		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG1/BG-hd.plist");
 		this.monsterWave = this.data.monsterNum;
 		this.currentMonsterCount = 0;
 		this.dispatchMonster = false;
@@ -49,8 +51,6 @@ var LuoboLevel01 = ccui.Layout.extend(
 		{
 			this.luoboPro.playShakeAnimate();
 		}, 10);
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/Items/Object01-hd.plist");
-		cc.spriteFrameCache.addSpriteFrames("res/Themes/Theme1/BG1/BG-hd.plist");
 	},
 	//tmxtiled map
 	handleTMXtileMap:function()
@@ -389,7 +389,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 
 		var path = cc.Sprite.createWithSpriteFrameName("Path.png");
 		path.setPosition(this.width/2, this.height/2);
-		this.addChild(path, 0);
+		this.addChild(path, 1);
 		
 		var menuBG = cc.Sprite.createWithSpriteFrameName("MenuBG.png");
 		menuBG.setPosition(this.width/2, this.height-menuBG.height/2);
@@ -548,7 +548,7 @@ var LuoboLevel01 = ccui.Layout.extend(
 		getAirAnimateion(point, this);
 		var bottleWeapon = new LuoboBottleWeapon(PlayerData.weaponType, point, this);
 		this.collisionLayer.addChild(bottleWeapon.base, 10);
-		this.collisionLayer.addChild(bottleWeapon.firstb, 10);
+		this.collisionLayer.addChild(bottleWeapon.firstb, 11);
 		this.weaponArr.push(bottleWeapon);
 		PlayerData.gold -= bottleWeapon.value;
 		this.showGoldNumber();

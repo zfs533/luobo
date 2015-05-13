@@ -130,7 +130,7 @@ var LuoboMenu = ccui.Layout.extend(
 	onExit:function()
 	{
 		this._super();
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/darkbg-hd.plist");
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/gamemenu-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/darkbg-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/gamemenu-hd.plist");
 	}
 });

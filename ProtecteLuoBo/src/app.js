@@ -58,7 +58,7 @@ var HelloWorldLayer = cc.Layer.extend(
     gotoLuoBoMainScene:function()
     {
     	var lbms = LuoBoMainScene.createScene();
-    	cc.director.runScene(cc.TransitionSlideInB.create(0.5, lbms));
+    	cc.director.runScene(cc.TransitionFade.create(0.5, lbms));
     }
 });
 
@@ -68,6 +68,7 @@ var HelloWorldScene = cc.Scene.extend(
     {
         this._super();
         var layer = new HelloWorldLayer();
+        cc.director.setDisplayStats(false);
         this.addChild(layer);
     }
 });

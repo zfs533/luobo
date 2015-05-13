@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ProtecteLuoBo</name>
+	<name>胡萝卜哒</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -10,7 +10,4 @@
 		<nature>org.ccdt.cocosproject</nature>
 		<nature>org.ccdt.jsdt.core.jsNature</nature>
 	</natures>
-	<cocosprojecttemplate>
-		<version>1.2</version>
-	</cocosprojecttemplate>
 </projectDescription>

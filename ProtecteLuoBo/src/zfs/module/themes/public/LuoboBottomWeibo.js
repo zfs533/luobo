@@ -80,7 +80,7 @@ var LuoboBottomWeibo = ccui.Layout.extend(
 	onExit:function()
 	{
 		this._super();
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/weibo-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/weibo-hd.plist");
 	},
 	//进入结点完成
 	onEnterTransitionDidFinish:function()

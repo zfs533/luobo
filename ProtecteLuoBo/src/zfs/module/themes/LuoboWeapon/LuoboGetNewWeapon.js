@@ -141,9 +141,9 @@ var LuoboGetNewWeapon = ccui.Layout.extend(
 	onExit:function()
 	{
 		this._super();
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/darkbg-hd.plist");
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Items/Items04-hd.plist");
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Items/Items05-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/darkbg-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Items/Items04-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Items/Items05-hd.plist");
 	},
 	//进入结点完成
 	onEnterTransitionDidFinish:function()

@@ -280,7 +280,7 @@ var LuoboGuidance = ccui.Layout.extend(
 	onExit:function()
 	{
 		this._super();
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Items/Items03-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/Items/Items03-hd.plist");
 	},
 	//进入结点完成
 	onEnterTransitionDidFinish:function()

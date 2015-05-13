@@ -250,9 +250,9 @@ var LuoboOverLevel = ccui.Layout.extend(
 	onExit:function()
 	{
 		this._super();
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/darkbg-hd.plist");
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/gameover0-hd.plist");
-		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/gameover-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/darkbg-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/gameover0-hd.plist");
+//		cc.spriteFrameCache.removeSpriteFramesFromFile("res/Themes/scene/gameover-hd.plist");
 	},
 	//进入结点完成
 	onEnterTransitionDidFinish:function()
