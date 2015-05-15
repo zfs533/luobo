@@ -10,8 +10,7 @@ var HelloWorldLayer = cc.Layer.extend(
     // init scene
     zinit:function()
     {
-//    	cc.audioEngine.playMusic("res/music/feng.mp3",true);
-    	
+    	cc.audioEngine.playMusic("res/music/feng.mp3",true);
     	this.setContentSize(Default.windowSize());
     	var layerColor = cc.LayerColor.create(cc.color.RED);
     	this.addChild(layerColor, 0);

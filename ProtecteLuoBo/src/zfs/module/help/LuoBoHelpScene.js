@@ -139,19 +139,19 @@ var LuoBoHelpScene = ccui.Layout.extend(
 		var helpBtn = BaseButton.createe("tips_normal_CN.png","tips_selected_CN.png","",ccui.Widget.PLIST_TEXTURE);
 		helpBtn.name = "helpBtn";
 		helpBtn.setPosition(cc.p(this.getSize().width/2 - helpBtn.width, this.getSize().height-helpBtn.height/2-15));
-		this.addChild(helpBtn, 20);
+		this.addChild(helpBtn, 21);
 		helpBtn.setSelected(true);
 		this.tempBtn = helpBtn;
 		
 		var monsterBtn = BaseButton.createe("monster_normal_CN.png","monster_selected_CN.png","",ccui.Widget.PLIST_TEXTURE);
 		monsterBtn.name = "monsterBtn";
 		monsterBtn.setPosition(cc.p(this.getSize().width/2, this.getSize().height-monsterBtn.height/2 - 15));
-		this.addChild(monsterBtn, 20);
+		this.addChild(monsterBtn, 22);
 	
 		var towerBtn = BaseButton.createe("tower_normal_CN.png","tower_selected_CN.png","",ccui.Widget.PLIST_TEXTURE);
 		towerBtn.name = "towerBtn";
 		towerBtn.setPosition(cc.p(this.getSize().width/2 + towerBtn.width, this.getSize().height-towerBtn.height/2 - 15));
-		this.addChild(towerBtn, 20);
+		this.addChild(towerBtn, 23);
 		
 		helpBtn.addTouchEventListener(this.helpTopMenuFunc, this);
 		monsterBtn.addTouchEventListener(this.helpTopMenuFunc, this);
@@ -231,7 +231,7 @@ var LuoBoHelpScene = ccui.Layout.extend(
 	{
 		var background = cc.Sprite.createWithSpriteFrameName("help_bg.png");
 		background.setPosition(cc.p(this.getSize().width/2, this.getSize().height/2));
-		this.addChild(background, 0);
+		this.addChild(background, 1);
 	}
 });
 
