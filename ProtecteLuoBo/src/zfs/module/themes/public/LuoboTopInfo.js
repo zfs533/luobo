@@ -96,11 +96,13 @@ var LuoboTopInfo = cc.Layer.extend(
 			{
 				this.isAddSpeed = false;
 				target.loadTextures("speed11.png","speed12.png","",ccui.Widget.PLIST_TEXTURE);
+				cc.director.getScheduler().setTimeScale(1);
 			}
 			else
 			{
 				this.isAddSpeed = true;
 				target.loadTextures("speed21.png","speed22.png","",ccui.Widget.PLIST_TEXTURE);
+				cc.director.getScheduler().setTimeScale(2);
 			} 
 		}
 		this.that.speedBtnTouchEvent(target, state);
@@ -122,6 +124,7 @@ var LuoboTopInfo = cc.Layer.extend(
 				target.loadTextures("pause01.png","pause01.png","",ccui.Widget.PLIST_TEXTURE);
 				this.menuCenter.setOpacity(250);
 				this.menuCenterBg.setOpacity(0);
+				cc.director.resume();
 			}
 			else
 			{
@@ -132,6 +135,7 @@ var LuoboTopInfo = cc.Layer.extend(
 				this.menuCenterBg.setOpacity(250);
 				this.isPause = true;
 				target.loadTextures("pause11.png","pause12.png","",ccui.Widget.PLIST_TEXTURE);
+				cc.director.pause();
 			} 
 		}
 		this.that.pauseBtnTouchEvent(target, state);
@@ -141,6 +145,7 @@ var LuoboTopInfo = cc.Layer.extend(
 	{
 		if(state == ccui.Widget.TOUCH_ENDED)
 		{
+			cc.director.resume();
 			hidePointAnimation(this.that);
 			hideAddWeaponAnimate(this.that);
 			this.that.hideWeaponLayout();
@@ -149,4 +154,9 @@ var LuoboTopInfo = cc.Layer.extend(
 		}
 		this.that.menuBtnTouchEvent(target, state);
 	},
+	onExit:function()
+	{
+		this._super();
+		cc.director.getScheduler().setTimeScale(1);
+	}
 });
